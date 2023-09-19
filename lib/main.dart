@@ -1,6 +1,13 @@
+import 'package:doa_se_app/perfil.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(Doase());
 }
 
@@ -12,17 +19,17 @@ class Doase extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: OlxHomePage(),
+      home: HomePag(),
     );
   }
 }
 
-class OlxHomePage extends StatefulWidget {
+class HomePag extends StatefulWidget {
   @override
-  _OlxHomePageState createState() => _OlxHomePageState();
+  _HomePagState createState() => _HomePagState();
 }
 
-class _OlxHomePageState extends State<OlxHomePage> {
+class _HomePagState extends State<HomePag> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
@@ -48,17 +55,17 @@ class _OlxHomePageState extends State<OlxHomePage> {
         },
         backgroundColor: Color.fromARGB(
             255, 15, 14, 14), // Define a cor de fundo da barra de navegação
-        selectedItemColor: const Color.fromARGB(
-            255, 148, 42, 42), // Define a cor do ícone e texto selecionados
+        selectedItemColor: Color.fromARGB(
+            255, 0, 0, 0), // Define a cor do ícone e texto selecionados
         unselectedItemColor: const Color.fromARGB(
             255, 122, 38, 38), // Define a cor do ícone e texto não selecionados
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
+            icon: Icon(Icons.add_circle),
             label: 'Anúncios',
           ),
           BottomNavigationBarItem(
@@ -105,8 +112,6 @@ class MessagesPage extends StatelessWidget {
 class UserProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('Página de Perfil do Usuário'),
-    );
+    return Login();
   }
 }

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "427540754863",
+    "firebase_url": "https://doase-f8cd1-default-rtdb.firebaseio.com",
+    "project_id": "doase-f8cd1",
+    "storage_bucket": "doase-f8cd1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:427540754863:android:3152cddab08279b623bf5a",
+        "android_client_info": {
+          "package_name": "dev.x_devs.doa_se.doa_se_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "427540754863-5bmqjm79q421tdd7u6v8mol5pn4s70gp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjbt-23TR7i4hasivR0vCrviFBISqe2p8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "427540754863-5bmqjm79q421tdd7u6v8mol5pn4s70gp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "427540754863-cqf8s7974b7gj24clo2gup833cgg0pu9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "dev.xdevs.doase.doaSeApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
