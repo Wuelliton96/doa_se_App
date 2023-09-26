@@ -19,10 +19,11 @@ class Doase extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: HomePag(),
+      home: Login(),
     );
   }
 }
+
 
 class HomePag extends StatefulWidget {
   @override
@@ -112,6 +113,8 @@ class MessagesPage extends StatelessWidget {
 class UserProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Login();
+    return Center(
+      child: Text('Perfil'),
+    );
   }
 }

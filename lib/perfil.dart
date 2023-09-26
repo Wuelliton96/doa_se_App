@@ -1,9 +1,31 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'main.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Acessa conta'),
+        centerTitle: true,
+      ),
       body: Container(
         padding: const EdgeInsets.only(
           top: 30,
@@ -17,6 +39,7 @@ class Login extends StatelessWidget {
               child: Image.asset("assets/doa-se.png"),
             ),
             TextFormField(
+              controller: emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: "E-mail",
@@ -31,6 +54,7 @@ class Login extends StatelessWidget {
               height: 10,
             ),
             TextFormField(
+              controller: passwordController,
               keyboardType: TextInputType.text,
               obscureText: true,
               decoration: const InputDecoration(
@@ -118,7 +142,20 @@ class Login extends StatelessWidget {
                       fontSize: 20
                     )
                   ),
-                  onPressed: () => [],                    
+                  onPressed: () async {
+                      try {
+                        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                          email: emailController.text,
+                          password: passwordController.text,
+                        );
+                        // A autenticação foi bem-sucedida, você pode navegar para a próxima tela.
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePag()));
+                      } catch (e) {
+                        // Trate os erros de autenticação (por exemplo, senha incorreta, usuário não encontrado).
+                        print("Erro: $e");
+                      }
+                    },                    
                   ),
                 ),
               ),
