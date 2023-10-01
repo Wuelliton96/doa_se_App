@@ -1,4 +1,9 @@
+import 'package:doa_se_app/anuncio_home.dart';
+import 'package:doa_se_app/box_card.dart';
+import 'package:doa_se_app/cadastro.dart';
 import 'package:doa_se_app/perfil.dart';
+import 'package:doa_se_app/redefinir_senha.dart';
+import 'package:doa_se_app/redefinir_senha.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -23,7 +28,6 @@ class Doase extends StatelessWidget {
     );
   }
 }
-
 
 class HomePag extends StatefulWidget {
   @override
@@ -87,7 +91,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text('Página Inicial'),
+      // child: BoxCard(boxContent: Text('teste pagina')),
+      child: AnuncioHome(),
     );
   }
 }
