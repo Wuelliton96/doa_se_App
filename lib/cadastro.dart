@@ -15,8 +15,10 @@ class Cadastro extends StatefulWidget {
 
 class _CadastroState extends State<Cadastro> {
   TextEditingController nomeController = TextEditingController();
-
+  TextEditingController emailController = TextEditingController();
   TextEditingController nomeusuarioController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController passwordconfirmaController = TextEditingController();
 
   File? selectedImageDocument;
 
@@ -36,8 +38,10 @@ class _CadastroState extends State<Cadastro> {
   @override
   void dispose() {
     nomeController.dispose();
-
+    emailController.dispose();
     nomeusuarioController.dispose();
+    passwordController.dispose();
+    passwordconfirmaController.dispose();
 
     super.dispose();
   }
@@ -77,10 +81,10 @@ class _CadastroState extends State<Cadastro> {
               height: 10,
             ),
             TextFormField(
-              controller: nomeusuarioController,
-              keyboardType: TextInputType.name,
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
-                labelText: "Nome de usuário",
+                labelText: "E-mail",
                 labelStyle: TextStyle(
                   color: Colors.black38,
                   fontWeight: FontWeight.w400,
@@ -90,6 +94,38 @@ class _CadastroState extends State<Cadastro> {
             ),
             SizedBox(
               height: 10,
+            ),
+            TextFormField(
+              controller: passwordController,
+              keyboardType: TextInputType.text,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: "Criar senha",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            TextFormField(
+              controller: passwordconfirmaController,
+              keyboardType: TextInputType.text,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: "Confirmar senha",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+                SizedBox(
+              height: 20,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
