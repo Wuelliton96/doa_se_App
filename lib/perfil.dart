@@ -1,3 +1,4 @@
+import 'package:doa_se_app/cadastro.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -108,7 +109,7 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
-                  onPressed: () => [],
+                  onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Cadastro())),
                 ),
               ),
             ),
