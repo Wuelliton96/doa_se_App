@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:image_picker/image_picker.dart';
-import 'main.dart';
+import '../main.dart';
 
 class Cadastro extends StatefulWidget {
   const Cadastro({super.key});
@@ -15,29 +12,18 @@ class Cadastro extends StatefulWidget {
 
 class _CadastroState extends State<Cadastro> {
   TextEditingController nomeController = TextEditingController();
-
+  TextEditingController emailController = TextEditingController();
   TextEditingController nomeusuarioController = TextEditingController();
-
-  File? selectedImageDocument;
-
-  Future<void> _pickImage() async {
-    final imagePicker = ImagePicker();
-    XFile? pickedFile =
-        await imagePicker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      File selectedImageDocument = File(pickedFile.path);
-      setState(() {
-        this.selectedImageDocument = selectedImageDocument;
-      });
-    }
-  }
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController passwordconfirmaController = TextEditingController();
 
   @override
   void dispose() {
     nomeController.dispose();
-
+    emailController.dispose();
     nomeusuarioController.dispose();
+    passwordController.dispose();
+    passwordconfirmaController.dispose();
 
     super.dispose();
   }
@@ -77,6 +63,21 @@ class _CadastroState extends State<Cadastro> {
               height: 10,
             ),
             TextFormField(
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                labelText: "E-mail",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            TextFormField(
               controller: nomeusuarioController,
               keyboardType: TextInputType.name,
               decoration: const InputDecoration(
@@ -91,34 +92,40 @@ class _CadastroState extends State<Cadastro> {
             SizedBox(
               height: 10,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: InkWell(
-                onTap: () {
-                  _pickImage(); // Chama a função para selecionar a imagem
-                },
-                child: Column(
-                  children: [
-                    Text(
-                      "Inserir Documento",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10), // Espaçamento entre o texto e o ícone
-                    Container(
-                      width: 100,
-                      height: 100,
-                      color: Colors.grey,
-                      child: selectedImageDocument != null
-                          ? Image.file(selectedImageDocument!)
-                          : Icon(Icons.camera_alt,
-                              size: 50, color: Colors.white), // Ícone da câmera
-                    ),
-                  ],
+            TextFormField(
+              controller: passwordController,
+              keyboardType: TextInputType.text,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: "Criar senha",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
                 ),
               ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            TextFormField(
+              controller: passwordconfirmaController,
+              keyboardType: TextInputType.text,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: "Confirmar senha",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            SizedBox(
+              height: 10,
             ),
             Container(
               height: 60,
@@ -146,8 +153,8 @@ class _CadastroState extends State<Cadastro> {
                       UserCredential userCredential = await FirebaseAuth
                           .instance
                           .signInWithEmailAndPassword(
-                        email: nomeController.text,
-                        password: nomeusuarioController.text,
+                        email: emailController.text,
+                        password: passwordController.text,
                       );
                       // A autenticação foi bem-sucedida, você pode navegar para a próxima tela.
                       // ignore: use_build_context_synchronously
@@ -161,6 +168,17 @@ class _CadastroState extends State<Cadastro> {
                 ),
               ),
             ),
+            Container(
+              height: 40,
+              alignment: Alignment.center,
+              child: TextButton(
+                child: Text(
+                  "Possuo cadastro",
+                  textAlign: TextAlign.right,
+                ),
+                onPressed: null,
+              ),
+            )
           ],
         ),
       ),

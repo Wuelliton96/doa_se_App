@@ -1,12 +1,17 @@
 import 'package:doa_se_app/anuncio_home.dart';
 import 'package:doa_se_app/box_card.dart';
 import 'package:doa_se_app/cadastro.dart';
+import 'package:doa_se_app/inserir_anuncio.dart';
+import 'package:doa_se_app/usuario.dart';
 import 'package:doa_se_app/perfil.dart';
+
 import 'package:doa_se_app/redefinir_senha.dart';
 import 'package:doa_se_app/redefinir_senha.dart';
+import 'package:doa_se_app/usuario.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +29,10 @@ class Doase extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: Login(),
+      // home: Inserir_anuncio(),
+      // home: RedefinirSenha(),
+      home: Cadastro(),
+      // home: Usuario(),
     );
   }
 }
