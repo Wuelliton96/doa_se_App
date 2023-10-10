@@ -74,21 +74,8 @@ class _CadastroState extends State<Cadastro> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
-            TextFormField(
-              controller: nomeusuarioController,
-              keyboardType: TextInputType.name,
-              decoration: const InputDecoration(
-                labelText: "Nome de usuário",
-                labelStyle: TextStyle(
-                  color: Colors.black38,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 20,
-                ),
-              ),
-            ),
+            
+            
             SizedBox(
               height: 10,
             ),

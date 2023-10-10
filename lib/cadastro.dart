@@ -55,7 +55,6 @@ class _CadastroState extends State<Cadastro> {
       ),
       body: Container(
         padding: const EdgeInsets.only(
-          top: 30,
           left: 30,
           right: 30,
         ),
@@ -77,9 +76,20 @@ class _CadastroState extends State<Cadastro> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 10,
+            SizedBox(),
+            TextFormField(
+              controller: nomeusuarioController,
+              keyboardType: TextInputType.name,
+              decoration: const InputDecoration(
+                labelText: "Nome de usuário",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
             ),
+            SizedBox(),
             TextFormField(
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
@@ -92,9 +102,7 @@ class _CadastroState extends State<Cadastro> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(),
             TextFormField(
               controller: passwordController,
               keyboardType: TextInputType.text,
@@ -108,9 +116,7 @@ class _CadastroState extends State<Cadastro> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(),
             TextFormField(
               controller: passwordconfirmaController,
               keyboardType: TextInputType.text,
@@ -124,9 +130,7 @@ class _CadastroState extends State<Cadastro> {
                 ),
               ),
             ),
-                SizedBox(
-              height: 20,
-            ),
+            SizedBox(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: InkWell(
@@ -157,7 +161,7 @@ class _CadastroState extends State<Cadastro> {
               ),
             ),
             Container(
-              height: 60,
+              height: 20,
               alignment: Alignment.bottomLeft,
               decoration: const BoxDecoration(
                   gradient: LinearGradient(
