@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-
+// Função principal que inicia o aplicativo
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -14,6 +14,7 @@ void main() async {
   runApp(Doase());
 }
 
+// Classe principal do aplicativo
 class Doase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -22,11 +23,12 @@ class Doase extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: Login(),
+      home: Login(), // Define a tela inicial como a tela de login
     );
   }
 }
 
+// Classe que representa a página inicial do aplicativo
 class HomePag extends StatefulWidget {
   @override
   _HomePagState createState() => _HomePagState();
@@ -48,7 +50,7 @@ class _HomePagState extends State<HomePag> {
       appBar: AppBar(
         title: Text('Doa-se'),
       ),
-      body: _pages[_currentIndex],
+      body: _pages[_currentIndex], // Exibe a página atual com base no índice selecionado
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -85,25 +87,27 @@ class _HomePagState extends State<HomePag> {
   }
 }
 
+// Classe que representa a página "Home"
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      // child: BoxCard(boxContent: Text('teste pagina')),
-      child: AnuncioHome(),
+      child: AnuncioHome(), // Exibe a página de anúncios
     );
   }
 }
 
+// Classe que representa a página de "Anúncios"
 class AdPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Inserir_anuncio(),
+      child: Inserir_anuncio(), // Exibe a página de inserção de anúncios
     );
   }
 }
 
+// Classe que representa a página de "Mensagens"
 class MessagesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -113,6 +117,7 @@ class MessagesPage extends StatelessWidget {
   }
 }
 
+// Classe que representa a página de "Perfil"
 class UserProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

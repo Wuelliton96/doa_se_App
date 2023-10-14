@@ -1,7 +1,7 @@
 import 'package:doa_se_app/cadastro.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+//import 'package:google_sign_in/google_sign_in.dart';
 import 'main.dart';
 
 class Login extends StatefulWidget {
@@ -10,6 +10,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  //Entrada de dados longin
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 

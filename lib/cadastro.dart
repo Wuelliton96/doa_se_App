@@ -1,27 +1,28 @@
 import 'dart:io';
-
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Importa a biblioteca de autenticação do Firebase
+import 'package:firebase_storage/firebase_storage.dart'; // Importa a biblioteca de armazenamento do Firebase
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
-import 'main.dart';
 
 class Cadastro extends StatefulWidget {
-  const Cadastro({super.key});
+  const Cadastro({Key? key}) : super(key: key);
 
   @override
   _CadastroState createState() => _CadastroState();
 }
 
 class _CadastroState extends State<Cadastro> {
+  // Controladores para os campos de entrada de dados
   TextEditingController nomeController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController nomeusuarioController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordconfirmaController = TextEditingController();
 
+  // Variável para armazenar a imagem selecionada pelo usuário
   File? selectedImageDocument;
 
+  // Função que permite ao usuário selecionar uma imagem da galeria
   Future<void> _pickImage() async {
     final imagePicker = ImagePicker();
     XFile? pickedFile =
@@ -35,6 +36,51 @@ class _CadastroState extends State<Cadastro> {
     }
   }
 
+  // Função para registrar um novo usuário
+  Future<void> _registerUser() async {
+    try {
+      // Cria uma conta de usuário no Firebase Auth com o e-mail e a senha fornecidos
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: emailController.text,
+            password: passwordController.text,
+          );
+
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Envia um e-mail de verificação para o usuário
+        await user.sendEmailVerification();
+
+        if (selectedImageDocument != null) {
+          // Faz upload da imagem de perfil para o Firebase Storage
+          Reference storageReference = FirebaseStorage.instance.ref()
+              .child('user_images/${user.uid}.jpg');
+          await storageReference.putFile(selectedImageDocument!);
+
+          // Obtém a URL da imagem de perfil no Firebase Storage
+          String downloadURL = await storageReference.getDownloadURL();
+
+          // Conecta ao Firestore (um banco de dados) e armazena informações do usuário
+          var FirebaseFirestore;
+          await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+            'name': nomeController.text,
+            'email': emailController.text,
+            'profilePicture': downloadURL,
+          });
+        } else {
+          // Lidar com o caso em que nenhuma imagem foi selecionada
+        }
+      } else {
+        // Lidar com o caso em que o registro falhou
+      }
+    } catch (e) {
+      // Lidar com erros de registro (por exemplo, e-mail inválido, senha inválida ou e-mail já em uso)
+      print("Error: $e");
+    }
+  }
+
+  // O método dispose é chamado quando a tela é fechada e é usado para limpar recursos
   @override
   void dispose() {
     nomeController.dispose();
@@ -46,6 +92,7 @@ class _CadastroState extends State<Cadastro> {
     super.dispose();
   }
 
+  // O método build cria a interface do usuário da tela de registro
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +109,7 @@ class _CadastroState extends State<Cadastro> {
         child: ListView(
           children: <Widget>[
             SizedBox(
-              child: Image.asset("assets/doa-se.png"),
+              child: Image.asset("assets/doa-se.png"), // Exibe uma imagem
             ),
             TextFormField(
               controller: nomeController,
@@ -106,7 +153,7 @@ class _CadastroState extends State<Cadastro> {
             TextFormField(
               controller: passwordController,
               keyboardType: TextInputType.text,
-              obscureText: true,
+              obscureText: true, // Oculta a senha
               decoration: const InputDecoration(
                 labelText: "Criar senha",
                 labelStyle: TextStyle(
@@ -120,7 +167,7 @@ class _CadastroState extends State<Cadastro> {
             TextFormField(
               controller: passwordconfirmaController,
               keyboardType: TextInputType.text,
-              obscureText: true,
+              obscureText: true, // Oculta a senha
               decoration: const InputDecoration(
                 labelText: "Confirmar senha",
                 labelStyle: TextStyle(
@@ -135,7 +182,7 @@ class _CadastroState extends State<Cadastro> {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: InkWell(
                 onTap: () {
-                  _pickImage(); // Chama a função para selecionar a imagem
+                  _pickImage(); // Permite ao usuário selecionar uma imagem
                 },
                 child: Column(
                   children: [
@@ -146,22 +193,22 @@ class _CadastroState extends State<Cadastro> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 10), // Espaçamento entre o texto e o ícone
+                    SizedBox(height: 10),
                     Container(
                       width: 100,
                       height: 100,
                       color: Colors.grey,
                       child: selectedImageDocument != null
-                          ? Image.file(selectedImageDocument!)
+                          ? Image.file(selectedImageDocument!) // Exibe a imagem selecionada
                           : Icon(Icons.camera_alt,
-                              size: 50, color: Colors.white), // Ícone da câmera
+                              size: 50, color: Colors.white), // Exibe um ícone de câmera se nenhuma imagem for selecionada
                     ),
                   ],
                 ),
               ),
             ),
             Container(
-              height: 20,
+              height: 40,
               alignment: Alignment.bottomLeft,
               decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -176,28 +223,14 @@ class _CadastroState extends State<Cadastro> {
                   borderRadius: BorderRadius.all(Radius.circular(5))),
               child: SizedBox.expand(
                 child: TextButton(
+                  onPressed: _registerUser, // Quando o botão "Cadastrar" é pressionado, chama a função de registro
                   child: const Text("Cadastrar",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 20)),
-                  onPressed: () async {
-                    try {
-                      UserCredential userCredential = await FirebaseAuth
-                          .instance
-                          .signInWithEmailAndPassword(
-                        email: nomeController.text,
-                        password: nomeusuarioController.text,
-                      );
-                      // A autenticação foi bem-sucedida, você pode navegar para a próxima tela.
-                      // ignore: use_build_context_synchronously
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => HomePag()));
-                    } catch (e) {
-                      // Trate os erros de autenticação (por exemplo, senha incorreta, usuário não encontrado).
-                      print("Erro: $e");
-                    }
-                  },
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 20
+                    )
+                  ),                  
                 ),
               ),
             ),
