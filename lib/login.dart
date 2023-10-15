@@ -110,10 +110,10 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
-                  onPressed: () => Navigator.pushReplacement(
+                  onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const Cadastro())),
+                          builder: (context) => Cadastro())),
                 ),
               ),
             ),
@@ -150,7 +150,7 @@ class _LoginState extends State<Login> {
                         password: passwordController.text,
                       );
                       // A autenticação foi bem-sucedida, você pode navegar para a próxima tela.
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePag()));
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder:(context) =>  HomePag()));
                     } catch (e) {
                       // Trate os erros de autenticação (por exemplo, senha incorreta, usuário não encontrado).
                       print("Erro: $e");

@@ -31,11 +31,11 @@ class _CadastroState extends State<Cadastro> {
         ),
         actions: [
           TextButton(
-            onPressed: () => {
-              Navigator.push(context,MaterialPageRoute(builder: (context) => const Login()))
-            },
             child: const Text('OK'),
-          ),
+            onPressed: () {
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Login()));
+            },
+          )
         ],
       ),
     );
@@ -82,18 +82,18 @@ class _CadastroState extends State<Cadastro> {
           await storageReference.putFile(selectedImageDocument!);
 
           // Obtém a URL da imagem de perfil no Firebase Storage
-          String downloadURL = await storageReference.getDownloadURL();
+          //String downloadURL = await storageReference.getDownloadURL();
 
           // Conecta ao Firestore (um banco de dados) e armazena informações do usuário
-          var FirebaseFirestore;
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .set({
-            'name': nomeController.text,
-            'email': emailController.text,
-            'profilePicture': downloadURL,
-          });
+          //var FirebaseFirestore;
+          //await FirebaseFirestore.instance
+          //    .collection('users')
+          //    .doc(user.uid)
+          //    .set({
+          //  'name': nomeController.text,
+          //  'email': emailController.text,
+          //  'profilePicture': downloadURL,
+          //});
         } else {
           // Lidar com o caso em que nenhuma imagem foi selecionada
         }
@@ -187,7 +187,7 @@ class _CadastroState extends State<Cadastro> {
               ),
             ),
             TextFormField(
-              controller: passwordconfirmaController,
+              controller: passwordconfirmaController ,
               keyboardType: TextInputType.text,
               obscureText: true, // Oculta a senha
               decoration: const InputDecoration(
@@ -250,7 +250,6 @@ class _CadastroState extends State<Cadastro> {
                     _showSuccessMessage(emailController.text);
                     _registerUser();
                   },
-                  //Navigator.push(context,MaterialPageRoute(builder: (context) => const Login()));
                   // Quando o botão "Cadastrar" é pressionado, chama a função de registro
                   child: const Text("Cadastrar",
                       style: TextStyle(
