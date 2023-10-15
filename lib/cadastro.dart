@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:doa_se_app/login.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Importa a biblioteca de autenticação do Firebase
 import 'package:firebase_storage/firebase_storage.dart'; // Importa a biblioteca de armazenamento do Firebase
 import 'package:flutter/material.dart';
@@ -18,6 +19,27 @@ class _CadastroState extends State<Cadastro> {
   TextEditingController nomeusuarioController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordconfirmaController = TextEditingController();
+
+  //Metodo para alerta da mensagem de cadastro com sucesso
+  void _showSuccessMessage(String email) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Cadastro realizado com sucesso!'),
+        content: Text(
+          'Enviamos um e-mail de verificação para o endereço $email. Por favor, verifique sua caixa de entrada e clique no link para ativar sua conta.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => {
+              Navigator.push(context,MaterialPageRoute(builder: (context) => const Login()))
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
   // Variável para armazenar a imagem selecionada pelo usuário
   File? selectedImageDocument;
@@ -40,11 +62,11 @@ class _CadastroState extends State<Cadastro> {
   Future<void> _registerUser() async {
     try {
       // Cria uma conta de usuário no Firebase Auth com o e-mail e a senha fornecidos
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-            email: emailController.text,
-            password: passwordController.text,
-          );
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
 
       User? user = userCredential.user;
 
@@ -54,8 +76,9 @@ class _CadastroState extends State<Cadastro> {
 
         if (selectedImageDocument != null) {
           // Faz upload da imagem de perfil para o Firebase Storage
-          Reference storageReference = FirebaseStorage.instance.ref()
-              .child('user_images/${user.uid}.jpg');
+          Reference storageReference = FirebaseStorage.instance
+              .ref()
+              .child('docs_images/${user.uid}.jpg');
           await storageReference.putFile(selectedImageDocument!);
 
           // Obtém a URL da imagem de perfil no Firebase Storage
@@ -63,7 +86,10 @@ class _CadastroState extends State<Cadastro> {
 
           // Conecta ao Firestore (um banco de dados) e armazena informações do usuário
           var FirebaseFirestore;
-          await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
             'name': nomeController.text,
             'email': emailController.text,
             'profilePicture': downloadURL,
@@ -123,7 +149,6 @@ class _CadastroState extends State<Cadastro> {
                 ),
               ),
             ),
-            SizedBox(),
             TextFormField(
               controller: nomeusuarioController,
               keyboardType: TextInputType.name,
@@ -136,7 +161,6 @@ class _CadastroState extends State<Cadastro> {
                 ),
               ),
             ),
-            SizedBox(),
             TextFormField(
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
@@ -149,7 +173,6 @@ class _CadastroState extends State<Cadastro> {
                 ),
               ),
             ),
-            SizedBox(),
             TextFormField(
               controller: passwordController,
               keyboardType: TextInputType.text,
@@ -163,7 +186,6 @@ class _CadastroState extends State<Cadastro> {
                 ),
               ),
             ),
-            SizedBox(),
             TextFormField(
               controller: passwordconfirmaController,
               keyboardType: TextInputType.text,
@@ -177,7 +199,6 @@ class _CadastroState extends State<Cadastro> {
                 ),
               ),
             ),
-            SizedBox(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: InkWell(
@@ -186,29 +207,31 @@ class _CadastroState extends State<Cadastro> {
                 },
                 child: Column(
                   children: [
-                    Text(
+                    const Text(
                       "Inserir Documento",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 10),
                     Container(
                       width: 100,
                       height: 100,
                       color: Colors.grey,
                       child: selectedImageDocument != null
-                          ? Image.file(selectedImageDocument!) // Exibe a imagem selecionada
+                          ? Image.file(
+                              selectedImageDocument!) // Exibe a imagem selecionada
                           : Icon(Icons.camera_alt,
-                              size: 50, color: Colors.white), // Exibe um ícone de câmera se nenhuma imagem for selecionada
+                              size: 50,
+                              color: Colors
+                                  .white), // Exibe um ícone de câmera se nenhuma imagem for selecionada
                     ),
                   ],
                 ),
               ),
             ),
             Container(
-              height: 40,
+              height: 50,
               alignment: Alignment.bottomLeft,
               decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -223,16 +246,22 @@ class _CadastroState extends State<Cadastro> {
                   borderRadius: BorderRadius.all(Radius.circular(5))),
               child: SizedBox.expand(
                 child: TextButton(
-                  onPressed: _registerUser, // Quando o botão "Cadastrar" é pressionado, chama a função de registro
+                  onPressed: () {
+                    _showSuccessMessage(emailController.text);
+                    _registerUser();
+                  },
+                  //Navigator.push(context,MaterialPageRoute(builder: (context) => const Login()));
+                  // Quando o botão "Cadastrar" é pressionado, chama a função de registro
                   child: const Text("Cadastrar",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20
-                    )
-                  ),                  
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 20)),
                 ),
               ),
+            ),
+            SizedBox(
+              height: 30,
             ),
           ],
         ),

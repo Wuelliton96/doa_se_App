@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'main.dart';
 
 class Login extends StatefulWidget {
+  const Login({Key? key}) : super(key: key);
+  
   @override
   _LoginState createState() => _LoginState();
 }
@@ -78,24 +80,22 @@ class _LoginState extends State<Login> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomLeft,
-                  stops: [0.3 , 1],
+                  stops: [0.3, 1],
                   colors: [
                     Color.fromARGB(255, 134, 101, 101),
                     Color.fromARGB(255, 134, 101, 101),
                   ],
                 ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(15)
-                ),
+                borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               child: SizedBox.expand(
                 child: TextButton(
-                  child:  Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Container(
                         child: SizedBox(
-                          child:Image.asset("assets/google.png"),
+                          child: Image.asset("assets/google.png"),
                           height: 28,
                           width: 28,
                         ),
@@ -110,7 +110,10 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
-                  onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Cadastro())),
+                  onPressed: () => Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Cadastro())),
                 ),
               ),
             ),
@@ -121,50 +124,45 @@ class _LoginState extends State<Login> {
               height: 60,
               alignment: Alignment.bottomLeft,
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomLeft,
-                  stops: [0.3 , 1],
-                  colors: [
-                    Color.fromRGBO(249, 43, 127, 1),
-                    Color.fromRGBO(249, 43, 127, 1),
-                  ],
-                ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(5)
-                )
-              ),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomLeft,
+                    stops: [0.3, 1],
+                    colors: [
+                      Color.fromRGBO(249, 43, 127, 1),
+                      Color.fromRGBO(249, 43, 127, 1),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
               child: SizedBox.expand(
                 child: TextButton(
-                  child: const Text(
-                    "Entrar",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20
-                    )
-                  ),
+                  child: const Text("Entrar",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 20)),
                   onPressed: () async {
-                      try {
-                        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                          email: emailController.text,
-                          password: passwordController.text,
-                        );
-                        // A autenticação foi bem-sucedida, você pode navegar para a próxima tela.
-                        // ignore: use_build_context_synchronously
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePag()));
-                      } catch (e) {
-                        // Trate os erros de autenticação (por exemplo, senha incorreta, usuário não encontrado).
-                        print("Erro: $e");
-                      }
-                    },                    
-                  ),
+                    try {
+                      UserCredential userCredential = await FirebaseAuth
+                          .instance
+                          .signInWithEmailAndPassword(
+                        email: emailController.text,
+                        password: passwordController.text,
+                      );
+                      // A autenticação foi bem-sucedida, você pode navegar para a próxima tela.
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePag()));
+                    } catch (e) {
+                      // Trate os erros de autenticação (por exemplo, senha incorreta, usuário não encontrado).
+                      print("Erro: $e");
+                    }
+                  },
                 ),
               ),
+            ),
             Container(
               height: 40,
               alignment: Alignment.center,
-              child:  TextButton(
+              child: TextButton(
                 child: Text(
                   "Esqueceu a senha",
                   textAlign: TextAlign.right,
