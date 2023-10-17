@@ -23,7 +23,7 @@ class Doase extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: Login(), // Define a tela inicial como a tela de login
+      home: const Login(), // Define a tela inicial como a tela de login
     );
   }
 }

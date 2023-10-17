@@ -33,7 +33,7 @@ class _CadastroState extends State<Cadastro> {
           TextButton(
             child: const Text('OK'),
             onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Login()));
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Login()), (Route<dynamic> router) => false);
             },
           )
         ],
