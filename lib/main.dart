@@ -1,6 +1,7 @@
 import 'package:doa_se_app/anuncio_home.dart';
 import 'package:doa_se_app/inserir_anuncio.dart';
 import 'package:doa_se_app/login.dart';
+import 'package:doa_se_app/usuario.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -23,7 +24,7 @@ class Doase extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: const Login(), // Define a tela inicial como a tela de login
+      home: HomePag(), // Define a tela inicial como a tela de login
     );
   }
 }
@@ -48,7 +49,6 @@ class _HomePagState extends State<HomePag> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Doa-se'),
       ),
       body: _pages[_currentIndex], // Exibe a página atual com base no índice selecionado
       bottomNavigationBar: BottomNavigationBar(
@@ -122,7 +122,7 @@ class UserProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text('Perfil'),
+      child: Usuario(),
     );
   }
 }
