@@ -1,25 +1,20 @@
-import 'package:doa_se_app/box_card.dart';
 import 'package:flutter/material.dart';
 
-class AnuncioHome extends StatelessWidget {
+
+class AnuncioHome extends StatefulWidget {
   const AnuncioHome({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: BoxCard(boxContent: _AnuncioHome()),
-    );
-  }
+  State<AnuncioHome> createState() => _AnuncioHomeState();
 }
 
-class _AnuncioHome extends StatelessWidget {
-  const _AnuncioHome({super.key});
-
+class _AnuncioHomeState extends State<AnuncioHome> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [Text('texto text 01')],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Doa-se'),
+      ),
     );
   }
 }

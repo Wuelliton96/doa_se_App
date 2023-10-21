@@ -1,19 +1,14 @@
-import 'package:doa_se_app/cadastro.dart';
-import 'package:doa_se_app/inserir_anuncio.dart';
-import 'package:doa_se_app/main.dart';
 import 'package:flutter/material.dart';
-
-void main() => runApp(Usuario());
-
 
 class Usuario extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        // appBar: AppBar(
-        //   title: Text('Perfil'),
-        // ),
+        appBar: AppBar(
+          backgroundColor: Colors.red,
+          title: const Text('Perfil'),
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -50,12 +45,11 @@ class CustomCard extends StatelessWidget {
       onTap: () { 
         // Navigator.of(context).push(MaterialPageRoute(builder: (_) => UserProfilePage()));
         if (text == 'Meus anúncios') {
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Inserir_anuncio()), (Route<dynamic> router) => false);
+                //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Inserir_anuncio()), (Route<dynamic> router) => false);
         } else if (text == 'Meu perfil') {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Cadastro()));
-
+                //Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Cadastro()));
         } else if (text == 'Sair') {
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>  HomePage()), (Route<dynamic> router) => false);
+                //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>  HomePage()), (Route<dynamic> router) => false);
         }
 
         // Ação a ser executada ao clicar no card

@@ -48,8 +48,6 @@ class _HomePagState extends State<HomePag> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      ),
       body: _pages[_currentIndex], // Exibe a página atual com base no índice selecionado
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
