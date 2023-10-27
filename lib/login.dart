@@ -54,7 +54,7 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             TextFormField(
@@ -70,7 +70,7 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Container(
@@ -117,7 +117,7 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Container(
