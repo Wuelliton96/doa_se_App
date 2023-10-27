@@ -24,7 +24,7 @@ class Doase extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: HomePag(), // Define a tela inicial como a tela de login
+      home: const Login(), // Define a tela inicial como a tela de login
     );
   }
 }
@@ -69,7 +69,7 @@ class _HomePagState extends State<HomePag> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add_circle),
-            label: 'Anúncios',
+            label: 'Anúnciar',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.message),
@@ -99,7 +99,7 @@ class HomePage extends StatelessWidget {
 class AdPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Inserir_anuncio(), // Exibe a página de inserção de anúncios
     );
   }
@@ -109,7 +109,7 @@ class AdPage extends StatelessWidget {
 class MessagesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text('Página de Mensagens'),
     );
   }

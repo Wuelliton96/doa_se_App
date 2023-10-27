@@ -13,7 +13,7 @@ class Usuario extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              CustomCard('Nome do Usuario', Color(0xFFD9D9D9), 0.9, 0.3,
+              CustomCard('Manseira', Color(0xFFD9D9D9), 0.9, 0.3,
                   true), // Card 1 com 80% da largura
               CustomCard('Meus anúncios', Colors.white, 0.9,
                   0.2), // Card 2 com 60% da largura
