@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:doa_se_app/login.dart';
+import 'package:doa_se_app/screens/login.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Importa a biblioteca de autenticação do Firebase
 import 'package:firebase_storage/firebase_storage.dart'; // Importa a biblioteca de armazenamento do Firebase
 import 'package:flutter/material.dart';
@@ -81,19 +81,6 @@ class _CadastroState extends State<Cadastro> {
               .child('docs_images/${user.uid}.jpg');
           await storageReference.putFile(selectedImageDocument!);
 
-          // Obtém a URL da imagem de perfil no Firebase Storage
-          //String downloadURL = await storageReference.getDownloadURL();
-
-          // Conecta ao Firestore (um banco de dados) e armazena informações do usuário
-          //var FirebaseFirestore;
-          //await FirebaseFirestore.instance
-          //    .collection('users')
-          //    .doc(user.uid)
-          //    .set({
-          //  'name': nomeController.text,
-          //  'email': emailController.text,
-          //  'profilePicture': downloadURL,
-          //});
         } else {
           // Lidar com o caso em que nenhuma imagem foi selecionada
         }
@@ -259,7 +246,7 @@ class _CadastroState extends State<Cadastro> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
           ],

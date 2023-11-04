@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'main.dart';
+import '../main.dart';
 
 class RedefinirSenha extends StatefulWidget {
   const RedefinirSenha({super.key});

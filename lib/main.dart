@@ -1,10 +1,10 @@
-import 'package:doa_se_app/anuncio_home.dart';
-import 'package:doa_se_app/inserir_anuncio.dart';
-import 'package:doa_se_app/login.dart';
-import 'package:doa_se_app/usuario.dart';
+import 'package:doa_se_app/screens/anuncio_home.dart';
+import 'package:doa_se_app/screens/inserir_anuncio.dart';
+import 'package:doa_se_app/screens/login.dart';
+import 'package:doa_se_app/screens/usuario.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'services/firebase_options.dart';
 
 // Função principal que inicia o aplicativo
 void main() async {
