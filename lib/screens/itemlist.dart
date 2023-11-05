@@ -1,3 +1,4 @@
+import 'package:doa_se_app/screens/itemanuncio.dart';
 import 'package:flutter/material.dart';
 
 class ItemList extends StatelessWidget {
@@ -7,7 +8,18 @@ class ItemList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+        return InkWell(
+      onTap: () {
+        // Navegar para outra página quando a Row for clicada
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return Itemanuncio(); // navega para tela item anuncio
+            },
+          ),
+        );
+      },
+    child: Container(
       height: 150,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       color: Colors.white,
@@ -32,6 +44,7 @@ class ItemList extends StatelessWidget {
         ),
         ]
       ),
-    );
+    )
+        );
   }
 }
