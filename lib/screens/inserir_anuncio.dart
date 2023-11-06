@@ -243,6 +243,7 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                 ),
                 child: const SizedBox.expand(
                   child: TextButton(
+                    onPressed: null,
                     child: Text(
                       "Inserir",
                       style: TextStyle(
@@ -250,8 +251,7 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                         color: Colors.white,
                         fontSize: 20,
                       ),
-                    ),
-                    onPressed: null, // Define o onPressed como null para tornar o botão não clicável
+                    ), // Define o onPressed como null para tornar o botão não clicável
                   ),
                 ),
               ),

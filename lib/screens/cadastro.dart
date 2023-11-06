@@ -1,24 +1,29 @@
 import 'dart:io';
+import 'package:doa_se_app/componentes/decoration_labeText.dart';
 import 'package:doa_se_app/screens/login.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Importa a biblioteca de autenticação do Firebase
-import 'package:firebase_storage/firebase_storage.dart'; // Importa a biblioteca de armazenamento do Firebase
+import 'package:doa_se_app/services/autenticacao_servico.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:doa_se_app/componentes/mensagem.dart';
 
 class Cadastro extends StatefulWidget {
-  const Cadastro({Key? key}) : super(key: key);
+  const Cadastro({super.key});
 
   @override
-  _CadastroState createState() => _CadastroState();
+  State<Cadastro> createState() => _CadastroState();
 }
 
 class _CadastroState extends State<Cadastro> {
-  // Controladores para os campos de entrada de dados
-  TextEditingController nomeController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController nomeusuarioController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController passwordconfirmaController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final AutenticacaoServico _autenticacaoServico = AutenticacaoServico();
+
+  final TextEditingController _nomeCompletoController = TextEditingController();
+  final TextEditingController _nomeUsuarioController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _senhaController = TextEditingController();
+  final TextEditingController _confirmarSenhaController =
+      TextEditingController();
 
   //Metodo para alerta da mensagem de cadastro com sucesso
   void _showSuccessMessage(String email) {
@@ -33,7 +38,9 @@ class _CadastroState extends State<Cadastro> {
           TextButton(
             child: const Text('OK'),
             onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Login()), (Route<dynamic> router) => false);
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const Login()),
+                  (Route<dynamic> router) => false);
             },
           )
         ],
@@ -42,216 +49,270 @@ class _CadastroState extends State<Cadastro> {
   }
 
   // Variável para armazenar a imagem selecionada pelo usuário
-  File? selectedImageDocument;
+  XFile? arquivoSelecionado;
 
   // Função que permite ao usuário selecionar uma imagem da galeria
-  Future<void> _pickImage() async {
-    final imagePicker = ImagePicker();
-    XFile? pickedFile =
-        await imagePicker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      File selectedImageDocument = File(pickedFile.path);
+  Future<void> selecionarArquivo() async {
+    final imagem = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (imagem != null) {
       setState(() {
-        this.selectedImageDocument = selectedImageDocument;
+        arquivoSelecionado = imagem;
       });
     }
   }
 
-  // Função para registrar um novo usuário
-  Future<void> _registerUser() async {
-    try {
-      // Cria uma conta de usuário no Firebase Auth com o e-mail e a senha fornecidos
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-
-      User? user = userCredential.user;
-
-      if (user != null) {
-        // Envia um e-mail de verificação para o usuário
-        await user.sendEmailVerification();
-
-        if (selectedImageDocument != null) {
-          // Faz upload da imagem de perfil para o Firebase Storage
-          Reference storageReference = FirebaseStorage.instance
-              .ref()
-              .child('docs_images/${user.uid}.jpg');
-          await storageReference.putFile(selectedImageDocument!);
-
-        } else {
-          // Lidar com o caso em que nenhuma imagem foi selecionada
-        }
-      } else {
-        // Lidar com o caso em que o registro falhou
-      }
-    } catch (e) {
-      // Lidar com erros de registro (por exemplo, e-mail inválido, senha inválida ou e-mail já em uso)
-      print("Error: $e");
+  // função para enviar imagem selecionada para o Storage do Firebase
+  Future<void> fazerUploadImagem() async {
+    if (arquivoSelecionado == null) {
+      print('Nenhum arquivo selecionado.');
+      return;
     }
+
+    final Reference storageRef = FirebaseStorage.instance
+        .ref()
+        .child('docs_images/img-${DateTime.now().toString()}.jpg');
+
+    final UploadTask uploadTask =
+        storageRef.putFile(File(arquivoSelecionado!.path));
+
+    uploadTask.whenComplete(() {
+      print('Upload concluído com sucesso.');
+    }).catchError((error) {
+      print('Erro no upload: $error');
+    });
   }
 
-  // O método dispose é chamado quando a tela é fechada e é usado para limpar recursos
   @override
   void dispose() {
-    nomeController.dispose();
-    emailController.dispose();
-    nomeusuarioController.dispose();
-    passwordController.dispose();
-    passwordconfirmaController.dispose();
-
+    _nomeCompletoController.dispose();
+    _nomeUsuarioController.dispose();
+    _emailController.dispose();
+    _senhaController.dispose();
+    _confirmarSenhaController.dispose();
     super.dispose();
   }
 
-  // O método build cria a interface do usuário da tela de registro
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cadastro'),
         centerTitle: true,
+        elevation: 0,
       ),
-      body: Container(
-        padding: const EdgeInsets.only(
-          left: 30,
-          right: 30,
-        ),
-        color: Colors.white,
-        child: ListView(
-          children: <Widget>[
-            SizedBox(
-              child: Image.asset("assets/doa-se.png"), // Exibe uma imagem
-            ),
-            TextFormField(
-              controller: nomeController,
-              keyboardType: TextInputType.name,
-              decoration: const InputDecoration(
-                labelText: "Nome completo",
-                labelStyle: TextStyle(
-                  color: Colors.black38,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            TextFormField(
-              controller: nomeusuarioController,
-              keyboardType: TextInputType.name,
-              decoration: const InputDecoration(
-                labelText: "Nome de usuário",
-                labelStyle: TextStyle(
-                  color: Colors.black38,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            TextFormField(
-              controller: emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                labelText: "E-mail",
-                labelStyle: TextStyle(
-                  color: Colors.black38,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            TextFormField(
-              controller: passwordController,
-              keyboardType: TextInputType.text,
-              obscureText: true, // Oculta a senha
-              decoration: const InputDecoration(
-                labelText: "Criar senha",
-                labelStyle: TextStyle(
-                  color: Colors.black38,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            TextFormField(
-              controller: passwordconfirmaController ,
-              keyboardType: TextInputType.text,
-              obscureText: true, // Oculta a senha
-              decoration: const InputDecoration(
-                labelText: "Confirmar senha",
-                labelStyle: TextStyle(
-                  color: Colors.black38,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: InkWell(
-                onTap: () {
-                  _pickImage(); // Permite ao usuário selecionar uma imagem
-                },
-                child: Column(
-                  children: [
-                    const Text(
-                      "Inserir Documento",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Form(
+              key: _formKey,
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset("assets/doa-se.png", height: 250, width: 250),
+                      const SizedBox(
+                        height: 70,
                       ),
-                    ),
-                    Container(
-                      width: 100,
-                      height: 100,
-                      color: Colors.grey,
-                      child: selectedImageDocument != null
-                          ? Image.file(
-                              selectedImageDocument!) // Exibe a imagem selecionada
-                          : const Icon(Icons.camera_alt,
-                              size: 50,
-                              color: Colors
-                                  .white), // Exibe um ícone de câmera se nenhuma imagem for selecionada
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              height: 50,
-              alignment: Alignment.bottomLeft,
-              decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomLeft,
-                    stops: [0.3, 1],
-                    colors: [
-                      Color.fromRGBO(249, 43, 127, 1),
-                      Color.fromRGBO(249, 43, 127, 1),
+                      TextFormField(
+                        controller: _nomeCompletoController,
+                        keyboardType: TextInputType.text,
+                        decoration: getDecorationLabelText('Nome Completo'),
+                        validator: (String? value) {
+                          if (value == null) {
+                            return "O nome não pode ser vazio"; // não funciona, mas não pode apagar
+                          }
+                          if (value.isEmpty) {
+                            return "*Campo obrigatório";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _nomeUsuarioController,
+                        keyboardType: TextInputType.text,
+                        decoration: getDecorationLabelText('Nome Usuário'),
+                        validator: (String? value) {
+                          if (value == null) {
+                            return "O nome não pode ser vazio"; // não funciona, mas não pode apagar
+                          }
+                          if (value.isEmpty) {
+                            return "*Campo obrigatório";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: getDecorationLabelText("E-mail"),
+                        validator: (String? value) {
+                          if (value == null) {
+                            return "O e-mail não pode ser vazio"; // não funciona, mas não pode apagar
+                          }
+                          if (value.isEmpty) {
+                            return "*Campo obrigatório";
+                          }
+                          if (value.length < 5) {
+                            return "O e-mail é muito curto";
+                          }
+                          if (!value.contains("@")) {
+                            return "O e-mail não é válido";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _senhaController,
+                        decoration: getDecorationLabelText("Senha"),
+                        obscureText: true,
+                        validator: (String? value) {
+                          if (value == null) {
+                            return "A senha não pode ser vazio"; // não funciona, mas não pode apagar
+                          }
+                          if (value.isEmpty) {
+                            return "*Campo obrigatório";
+                          }
+                          if (value.length < 5) {
+                            return "A senha é muito curta";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _confirmarSenhaController,
+                        decoration: getDecorationLabelText("Confirmar Senha"),
+                        obscureText: true,
+                        validator: (String? value) {
+                          if (value == null) {
+                            return "A senha não pode ser vazio"; // não funciona, mas não pode apagar
+                          }
+                          if (value.isEmpty) {
+                            return "*Campo obrigatório";
+                          }
+                          if (value.length < 5) {
+                            return "A senha é muito curta";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 32),
+                      InkWell(
+                        onTap: () {
+                          selecionarArquivo(); // Permite ao usuário selecionar uma imagem
+                        },
+                        child: Column(
+                          children: [
+                            const Text(
+                              "Inserir Documento",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Container(
+                              width: 100,
+                              height: 100,
+                              color: Colors.grey,
+                              child: arquivoSelecionado != null
+                                  ? Image.file(File(arquivoSelecionado!
+                                      .path)) // Exibe a imagem selecionada
+                                  : const Icon(Icons.camera_alt,
+                                      size: 50,
+                                      color: Colors
+                                          .white), // Exibe um ícone de câmera se nenhuma imagem for selecionada
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(200, 50),
+                          textStyle: const TextStyle(fontSize: 22),
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                        ),
+                        onPressed: () => botaoCadastrarClicado(),
+                        child: const Text("Cadastrar"),
+                      ),
                     ],
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(5))),
-              child: SizedBox.expand(
-                child: TextButton(
-                  onPressed: () {
-                    _showSuccessMessage(emailController.text);
-                    _registerUser();
-                  },
-                  // Quando o botão "Cadastrar" é pressionado, chama a função de registro
-                  child: const Text("Cadastrar",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 20)),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 30,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+
+  void botaoCadastrarClicado() {
+    String nomeCompleto = _nomeCompletoController.text;
+    String nomeUsuario = _nomeUsuarioController.text;
+    String email = _emailController.text;
+    String senha = _senhaController.text;
+    String confirmarSenha = _confirmarSenhaController.text;
+
+    if (_formKey.currentState!.validate()) {
+      print("Formulário validado com sucesso!");
+      print(
+          "$_nomeCompletoController, $_nomeUsuarioController, $_emailController, $_senhaController, $_confirmarSenhaController");
+      if (senha == confirmarSenha) {
+        _autenticacaoServico.verificarEmail(email).then((bool? erro) {
+          if (erro == true) {
+            mostrarMensagem(
+                context: context, texto: "Esse e-mail já está em uso!");
+          } else {
+            _autenticacaoServico
+                .cadastrarUsuario(email: email, senha: senha)
+                .then((String? erro) {
+              if (erro != null) {
+                mostrarMensagem(
+                    context: context, texto: "Esse e-mail já está em uso!");
+              } else {
+                _autenticacaoServico
+                    .salvarDados(
+                        email: email,
+                        nomeCompleto: nomeCompleto,
+                        nomeUsuario: nomeUsuario,
+                        senha: senha)
+                    .then((String? erro) {
+                  if (erro != null) {
+                    mostrarMensagem(
+                        context: context, texto: "Cadastro inválido!");
+                  }
+                });
+                //_autenticacaoServico.enviarLinkParaEmail(email);
+                fazerUploadImagem();
+                _showSuccessMessage(_emailController.text);
+              }
+            });
+          }
+        });
+      } else {
+        mostrarMensagem(context: context, texto: "A senha está diferente!");
+      }
+    } else {
+      mostrarMensagem(
+          context: context, texto: "Selecione uma imagem para perfil!");
+    }
+  }
 }
+
+/*
+var emailAuth = 'someemail@domain.com';
+FirebaseAuth.instance.sendSignInLinkToEmail(
+        email: emailAuth, actionCodeSettings: acs)
+    .catchError((onError) => print('Error sending email verification $onError'))
+    .then((value) => print('Successfully sent email verification'));
+});
+*/
+
+// && arquivoSelecionado != null
