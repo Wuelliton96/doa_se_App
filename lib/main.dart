@@ -101,7 +101,7 @@ class AdPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Inserir_anuncio(), // Exibe a página de inserção de anúncios
+      child: InserirAnuncio(), // Exibe a página de inserção de anúncios
     );
   }
 }

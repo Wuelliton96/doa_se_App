@@ -20,7 +20,7 @@ class Itemanuncio extends StatelessWidget {
                 ),
                 Container(
                   padding: const EdgeInsets.all(16),
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -32,17 +32,17 @@ class Itemanuncio extends StatelessWidget {
                       ),
                       Text(
                         'Publicado em 01/11 as 20:32',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w400,
                           color: Colors.grey,
                         ),
                       ),
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.symmetric(vertical: 16),
                         child: Divider(),
                       ),
-                      const Text(
+                      Text(
                         "Descrição",
                         style: TextStyle(
                           fontSize: 18,
@@ -55,15 +55,15 @@ class Itemanuncio extends StatelessWidget {
                         'conforto e segurança. Este carro vem com todos os recursos'
                         'modernos, uma ótima economia de combustível e manutenção'
                         'em dia. Uma oportunidade única de adquirir um excelente ',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                         ),
                       ),
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.symmetric(vertical: 16),
                         child: Divider(),
                       ),
-                      const Text(
+                      Text(
                         "Contato",
                         style: TextStyle(
                           fontSize: 18,
@@ -71,10 +71,10 @@ class Itemanuncio extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 66),
+                        padding: EdgeInsets.only(bottom: 66),
                         child: Text(
                           '999999',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                           ),
                         ),
@@ -94,10 +94,10 @@ class Itemanuncio extends StatelessWidget {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
+                                padding: EdgeInsets.only(bottom: 8),
                                 child: Text(
                                   'Cep: 89220-222',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 18,
                                   ),
                                 ),
@@ -116,10 +116,10 @@ class Itemanuncio extends StatelessWidget {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
+                                padding: EdgeInsets.only(bottom: 8),
                                 child: Text(
                                   'Bairro: America',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 18,
                                   ),
                                 ),

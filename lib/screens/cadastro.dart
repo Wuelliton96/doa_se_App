@@ -208,7 +208,7 @@ class _CadastroState extends State<Cadastro> {
                       child: selectedImageDocument != null
                           ? Image.file(
                               selectedImageDocument!) // Exibe a imagem selecionada
-                          : Icon(Icons.camera_alt,
+                          : const Icon(Icons.camera_alt,
                               size: 50,
                               color: Colors
                                   .white), // Exibe um ícone de câmera se nenhuma imagem for selecionada

@@ -1,53 +1,59 @@
+import 'package:doa_se_app/api/api_cep.dart';
+import 'package:doa_se_app/componentes/cep_decoretion.dart';
+import 'package:doa_se_app/models/cep.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class Inserir_anuncio extends StatefulWidget {
-  const Inserir_anuncio({Key? key});
+class InserirAnuncio extends StatefulWidget {
+  const InserirAnuncio({Key? key});
 
   @override
-  _Inserir_anuncioState createState() => _Inserir_anuncioState();
+  _InserirAnuncioState createState() => _InserirAnuncioState();
 }
 
-class _Inserir_anuncioState extends State<Inserir_anuncio> {
+class _InserirAnuncioState extends State<InserirAnuncio> {
   String? selectedCategoria;
   String? selectedEstado;
   String? selectedCidade;
   String? selectedBairro;
   File? selectedImage;
+  AddressInfo? addressInfo; // Mantém as informações do endereço obtidas da busca por CEP
+  String? cep; // Mantém o CEP inserido
+  TextEditingController cepController = TextEditingController();
 
-    List<String> categorias = [
+  // Método para buscar informações de endereço a partir do CEP usando a ViaCepApi
+  Future<void> _fetchAddressFromCEP(String cep) async {
+    final info = await ViaCepApi.getAddressInfo(cep);
+    if (info != null) {
+      setState(() {
+        addressInfo = info; // Atualiza addressInfo com os dados obtidos
+        selectedEstado = info.estado; // Preenche o estado com base nas informações da API
+        selectedCidade = info.cidade; // Preenche a cidade com base nas informações da API
+        selectedBairro = info.bairro; // Preenche o bairro com base nas informações da API
+      });
+    } else {
+      // Lide com o caso em que a solicitação à API falhe.
+      // Você pode mostrar uma mensagem de erro ou lidar com isso conforme necessário.
+    }
+  }
+
+  List<String> categorias = [
     'Categoria 1',
     'Categoria 2',
     'Categoria 3',
     'Categoria 4',
   ];
 
-    List<String> estados = [
-    'estado 1',
-    'estado 2',
-    'estado 3',
-    'estado 4',
-  ];
-
-    List<String> cidades = [
-    'cidade 1',
-    'cidade 2',
-    'cidade 3',
-    'cidade 4',
-  ];
-
-    List<String> bairros = [
-    'bairro 1',
-    'bairro 2',
-    'bairro 3',
-    'bairro 4',
-  ];
+  @override
+  void initState() {
+    super.initState();
+  }
 
   InputDecoration _buildInputDecoration(String labelText) {
     return InputDecoration(
       labelText: labelText,
-      labelStyle: TextStyle(
+      labelStyle: const TextStyle(
         color: Colors.black38,
         fontWeight: FontWeight.w400,
         fontSize: 20,
@@ -66,11 +72,10 @@ class _Inserir_anuncioState extends State<Inserir_anuncio> {
       setState(() {
         this.selectedImage = selectedImage;
       });
-      
     }
   }
 
-  @override 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -89,7 +94,7 @@ class _Inserir_anuncioState extends State<Inserir_anuncio> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Título Anúncio',
                   border: OutlineInputBorder(),
                 ),
@@ -122,6 +127,32 @@ class _Inserir_anuncioState extends State<Inserir_anuncio> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: cepController,
+                      decoration: _buildInputDecoration("CEP"),
+                      keyboardType: const TextInputType.numberWithOptions(),
+                      onChanged: (value) {
+                        setState(() {
+                          cep = value;
+                        });
+                      },
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Quando o botão "Buscar" é pressionado, chame a função para buscar informações
+                      _fetchAddressFromCEP(cep!);
+                    },
+                    child: const Text("Buscar"),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: DropdownButtonFormField<String>(
                 value: selectedEstado,
                 onChanged: (String? newValue) {
@@ -129,7 +160,7 @@ class _Inserir_anuncioState extends State<Inserir_anuncio> {
                     selectedEstado = newValue;
                   });
                 },
-                items: estados.map((String estado) {
+                items: [addressInfo?.estado ?? ''].map((String estado) {
                   return DropdownMenuItem<String>(
                     value: estado,
                     child: Text(estado),
@@ -147,7 +178,7 @@ class _Inserir_anuncioState extends State<Inserir_anuncio> {
                     selectedCidade = newValue;
                   });
                 },
-                items: cidades.map((String cidade) {
+                items: [addressInfo?.cidade ?? ''].map((String cidade) {
                   return DropdownMenuItem<String>(
                     value: cidade,
                     child: Text(cidade),
@@ -156,6 +187,7 @@ class _Inserir_anuncioState extends State<Inserir_anuncio> {
                 decoration: _buildInputDecoration("Cidade"),
               ),
             ),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: DropdownButtonFormField<String>(
@@ -165,13 +197,13 @@ class _Inserir_anuncioState extends State<Inserir_anuncio> {
                     selectedBairro = newValue;
                   });
                 },
-                items: bairros.map((String bairro) {
+                items: [addressInfo?.bairro ?? ''].map((String bairro) {
                   return DropdownMenuItem<String>(
                     value: bairro,
                     child: Text(bairro),
                   );
                 }).toList(),
-                decoration: _buildInputDecoration("Bairro"),
+                decoration: buildInputDecoration("Bairro"),
               ),
             ),
             Padding(
@@ -186,20 +218,18 @@ class _Inserir_anuncioState extends State<Inserir_anuncio> {
                   color: Colors.grey,
                   child: selectedImage != null
                       ? Image.file(selectedImage!)
-                      : Icon(Icons.camera_alt, size: 50, color: Colors.white), // Ícone da câmera
+                      : const Icon(Icons.camera_alt, size: 50, color: Colors.white),
                 ),
               ),
             ),
-            SizedBox(
-              height: 20,
+            const SizedBox(
+              height: 30,
             ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              height: 60,
-              alignment: Alignment.bottomLeft,
-              decoration: const BoxDecoration(
+            IgnorePointer(
+              child: Container(
+                height: 60,
+                alignment: Alignment.bottomLeft,
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomLeft,
@@ -209,17 +239,20 @@ class _Inserir_anuncioState extends State<Inserir_anuncio> {
                       Color.fromRGBO(249, 43, 127, 1),
                     ],
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(5))),
-              child: SizedBox.expand(
-                child: TextButton(
-                  child: const Text("Cadastrar",
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                ),
+                child: const SizedBox.expand(
+                  child: TextButton(
+                    child: Text(
+                      "Inserir",
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 20)),
-                  onPressed: () async {
-                    // Coloque a lógica para processar o formulário aqui
-                  },
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
+                    onPressed: null, // Define o onPressed como null para tornar o botão não clicável
+                  ),
                 ),
               ),
             ),
