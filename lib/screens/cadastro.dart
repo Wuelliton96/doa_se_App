@@ -61,7 +61,7 @@ class _CadastroState extends State<Cadastro> {
     }
   }
 
-  // função para enviar imagem selecionada para o Storage do Firebase
+  // método responsável por enviar imagem selecionada para o Storage do Firebase
   Future<void> fazerUploadImagem() async {
     if (arquivoSelecionado == null) {
       print('Nenhum arquivo selecionado.');
@@ -122,10 +122,10 @@ class _CadastroState extends State<Cadastro> {
                         keyboardType: TextInputType.text,
                         decoration: getDecorationLabelText('Nome Completo'),
                         validator: (String? value) {
-                          if (value == null) {
-                            return "O nome não pode ser vazio"; // não funciona, mas não pode apagar
+                          if (value == null) {    // Condicional que não pode ser apagado
+                            return "";
                           }
-                          if (value.isEmpty) {
+                          if (value.isEmpty) {    // Verifica se o campo está vazio
                             return "*Campo obrigatório";
                           }
                           return null;
@@ -137,8 +137,8 @@ class _CadastroState extends State<Cadastro> {
                         keyboardType: TextInputType.text,
                         decoration: getDecorationLabelText('Nome Usuário'),
                         validator: (String? value) {
-                          if (value == null) {
-                            return "O nome não pode ser vazio"; // não funciona, mas não pode apagar
+                          if (value == null) {    // Condicional que não pode ser apagado
+                            return ""; 
                           }
                           if (value.isEmpty) {
                             return "*Campo obrigatório";
@@ -151,8 +151,8 @@ class _CadastroState extends State<Cadastro> {
                         controller: _emailController,
                         decoration: getDecorationLabelText("E-mail"),
                         validator: (String? value) {
-                          if (value == null) {
-                            return "O e-mail não pode ser vazio"; // não funciona, mas não pode apagar
+                          if (value == null) {    // Condicional que não pode ser apagado
+                            return "";
                           }
                           if (value.isEmpty) {
                             return "*Campo obrigatório";
@@ -172,8 +172,8 @@ class _CadastroState extends State<Cadastro> {
                         decoration: getDecorationLabelText("Senha"),
                         obscureText: true,
                         validator: (String? value) {
-                          if (value == null) {
-                            return "A senha não pode ser vazio"; // não funciona, mas não pode apagar
+                          if (value == null) {    // Condicional que não pode ser apagado
+                            return "";
                           }
                           if (value.isEmpty) {
                             return "*Campo obrigatório";
@@ -190,8 +190,8 @@ class _CadastroState extends State<Cadastro> {
                         decoration: getDecorationLabelText("Confirmar Senha"),
                         obscureText: true,
                         validator: (String? value) {
-                          if (value == null) {
-                            return "A senha não pode ser vazio"; // não funciona, mas não pode apagar
+                          if (value == null) {    // Condicional que não pode ser apagado
+                            return ""; 
                           }
                           if (value.isEmpty) {
                             return "*Campo obrigatório";
@@ -253,30 +253,37 @@ class _CadastroState extends State<Cadastro> {
     );
   }
 
+  // Função que é chamada quando o botão de cadastro é clicado
   void botaoCadastrarClicado() {
+    // Obter os valores inseridos nos campos do formulário
     String nomeCompleto = _nomeCompletoController.text;
     String nomeUsuario = _nomeUsuarioController.text;
     String email = _emailController.text;
     String senha = _senhaController.text;
     String confirmarSenha = _confirmarSenhaController.text;
 
+    // Verificar se o formulário foi validado com sucesso
     if (_formKey.currentState!.validate()) {
       print("Formulário validado com sucesso!");
-      print(
-          "$_nomeCompletoController, $_nomeUsuarioController, $_emailController, $_senhaController, $_confirmarSenhaController");
+      // Verificar se a senha e a confirmação de senha coincidem
       if (senha == confirmarSenha) {
+        // Verificar se o e-mail já está em uso
         _autenticacaoServico.verificarEmail(email).then((bool? erro) {
           if (erro == true) {
+            // O e-mail já está em uso, exibir uma mensagem de erro
             mostrarMensagem(
                 context: context, texto: "Esse e-mail já está em uso!");
           } else {
+            // Cadastrar o usuário no Firebase Authentication
             _autenticacaoServico
                 .cadastrarUsuario(email: email, senha: senha)
                 .then((String? erro) {
               if (erro != null) {
+                // Ocorreu um erro no cadastro, exibir uma mensagem de erro
                 mostrarMensagem(
                     context: context, texto: "Esse e-mail já está em uso!");
               } else {
+                // Salvar os dados do usuário no Firestore
                 _autenticacaoServico
                     .salvarDados(
                         email: email,
@@ -285,34 +292,31 @@ class _CadastroState extends State<Cadastro> {
                         senha: senha)
                     .then((String? erro) {
                   if (erro != null) {
+                    // Ocorreu um erro ao salvar os dados, exibir uma mensagem de erro
                     mostrarMensagem(
                         context: context, texto: "Cadastro inválido!");
                   }
                 });
-                //_autenticacaoServico.enviarLinkParaEmail(email);
+                // Enviar um link de verificação para o e-mail do usuário
+                _autenticacaoServico.enviarLinkParaEmail(email);
+                // Realizar o upload da imagem do perfil
                 fazerUploadImagem();
+                // Exibir uma mensagem de sucesso
                 _showSuccessMessage(_emailController.text);
               }
             });
           }
         });
       } else {
+        // A senha e a confirmação de senha não coincidem, exibir uma mensagem de erro
         mostrarMensagem(context: context, texto: "A senha está diferente!");
       }
     } else {
+      // O formulário não foi validado com sucesso, exibir uma mensagem de erro
       mostrarMensagem(
           context: context, texto: "Selecione uma imagem para perfil!");
     }
   }
 }
-
-/*
-var emailAuth = 'someemail@domain.com';
-FirebaseAuth.instance.sendSignInLinkToEmail(
-        email: emailAuth, actionCodeSettings: acs)
-    .catchError((onError) => print('Error sending email verification $onError'))
-    .then((value) => print('Successfully sent email verification'));
-});
-*/
 
 // && arquivoSelecionado != null

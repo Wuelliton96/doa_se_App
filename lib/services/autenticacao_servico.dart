@@ -4,10 +4,10 @@ import 'package:uuid/uuid.dart';
 
 class AutenticacaoServico {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  FirebaseFirestore db = FirebaseFirestore.instance;
-  final bool cadastrado = false;
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+  
 
-  // método para cadastrar email e senha do usuário
+  // Método para cadastrar um novo usuário com email e senha
   Future<String?> cadastrarUsuario({
     required String email,
     required String senha
@@ -30,7 +30,7 @@ class AutenticacaoServico {
     }
   }
 
-  // método para enviar os dados do formulário de cadastro para o Cloud Firestone
+  // Método para salvar os dados do usuário no Cloud Firestore
   Future<String?> salvarDados({
     required String email,
     required String nomeCompleto,
@@ -52,7 +52,7 @@ class AutenticacaoServico {
     }
   }
 
-  // método para verificar cadastro no Firebase
+  // Método para fazer login de um usuário
   Future<String?> logarUsuario({
     required String email,
     required String senha
@@ -73,6 +73,7 @@ class AutenticacaoServico {
     return _firebaseAuth.signOut();
   }
 
+  // Método para verificar se o email já está cadastrado
   Future<bool> verificarEmail(String email) async {
     try {
       final List<String> signInMethods = await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
@@ -83,10 +84,8 @@ class AutenticacaoServico {
       return false;
     }
   }
-}
 
-
-/*
+  // Método para enviar link de validação para o e-mail do usuário
   Future<void> enviarLinkParaEmail(String email) async {
     try {
       await FirebaseAuth.instance.sendSignInLinkToEmail(
@@ -96,7 +95,7 @@ class AutenticacaoServico {
           androidPackageName: 'dev.x_devs.doa_se.doa_se_app',
           handleCodeInApp: true,
           androidInstallApp: true,
-          androidMinimumVersion: '19',
+          androidMinimumVersion: '16',
         ),
       );
       print('Link de verificação enviado com sucesso para $email. Verifique seu email para concluir o registro.');
@@ -104,4 +103,25 @@ class AutenticacaoServico {
       print('Erro ao enviar o link de verificação: $e');
     }
   }
-*/
+  
+
+  /*
+  Future<bool> verificarEmailNoFirestore(String email) async {
+  try {
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('usuarios') // Substitua 'usuarios' pelo nome da sua coleção
+        .where('email', isEqualTo: email) // Substitua 'email' pelo nome do campo de e-mail
+        .get();
+      return querySnapshot.docs.isNotEmpty; // Verifica se algum documento foi encontrado
+    } catch (e) {
+      print('Erro ao verificar o e-mail no Firestore: $e');
+      return false;
+    }
+  }
+  */
+
+}
+
+
+
+  

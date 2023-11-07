@@ -58,8 +58,11 @@ class _LoginState extends State<Login> {
                         keyboardType: TextInputType.text,
                         decoration: getDecorationLabelText("E-mail"),
                         validator:(String? value) {
-                          if (value == null){
-                            return "O e-mail não pode ser vazio";
+                          if (value == null){   // Condicional que não pode ser apagado 
+                            return "";
+                          }
+                          if (value.isEmpty) {
+                            return "Digite seu e-mail!";
                           }
                           if (value.length < 5) {
                             return "O e-mail é muito curto";
@@ -78,8 +81,11 @@ class _LoginState extends State<Login> {
                         decoration: getDecorationLabelText("Senha"),
                         obscureText: true,
                         validator:(String? value) {
-                          if (value == null){
-                            return "A senha não pode ser vazio";
+                          if (value == null){   // Condicional que não pode ser apagado
+                            return "";
+                          }
+                          if (value.isEmpty) {
+                            return "Digite sua senha!";
                           }
                           if (value.length < 5) {
                             return "A senha é muito curta";
@@ -150,24 +156,32 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-
+  // Método responsável por limpar o campo do formulário
   void apagarInformacaoFormulario() {
     _emailController.text = '';
     _senhaController.text = '';
   }
 
+  // Método chamado quando o botão "Entrar" é clicado
   botaoEntrarClicado() {
+    // Obtém o email e senha do usuário dos controladores de texto
     String email = _emailController.text;
     String senha = _senhaController.text;
 
+    // Verifica se o formulário está validado
     if (_formKey.currentState!.validate()) {
       print("Entrada validada!");
+      // Chama o serviço de autenticação para fazer login com o email e senha
       _autenticacaoServico.logarUsuario(email: email, senha: senha)
       .then((String? erro){
+        // Verifica se ocorreu algum erro durante o login
         if (erro != null) {
+          // Se houver um erro, exibe uma mensagem de erro
           mostrarMensagem(context: context, texto: "Login inválido!");
         } else {
+          // Se o login for bem-sucedido, limpa o formulário
           apagarInformacaoFormulario();
+          // Navega para a tela "AnuncioHome"
           Navigator.push(
             context, 
             MaterialPageRoute(
