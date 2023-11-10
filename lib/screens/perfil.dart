@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:doa_se_app/screens/login.dart';
 
 class Usuario extends StatelessWidget {
   @override
@@ -13,14 +15,10 @@ class Usuario extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              CustomCard('Manseira', Color(0xFFD9D9D9), 0.9, 0.3,
-                  true), // Card 1 com 80% da largura
-              CustomCard('Meus anúncios', Colors.white, 0.9,
-                  0.2), // Card 2 com 60% da largura
-              CustomCard('Meu perfil', Colors.white, 0.9,
-                  0.2), // Card 3 com 70% da largura
-              CustomCard(
-                  'Sair', Colors.white, 0.9, 0.1), // Card 4 com 90% da largura
+              CustomCard('Manseira', Color(0xFFD9D9D9), 0.9, 0.3, true),
+              CustomCard('Meus anúncios', Colors.white, 0.9, 0.2),
+              CustomCard('Meu perfil', Colors.white, 0.9, 0.2),
+              CustomCard('Sair', Colors.white, 0.9, 0.1),
             ],
           ),
         ),
@@ -36,25 +34,29 @@ class CustomCard extends StatelessWidget {
   final Color color;
   final bool centertext;
 
-  CustomCard(this.text, this.color, this.widthFactor, this.heightFactor,
-      [this.centertext = false]);
+  CustomCard(
+      this.text, this.color, this.widthFactor, this.heightFactor, [this.centertext = false]);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () { 
-        // Navigator.of(context).push(MaterialPageRoute(builder: (_) => UserProfilePage()));
+      onTap: () {
         if (text == 'Meus anúncios') {
-                //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Inserir_anuncio()), (Route<dynamic> router) => false);
+          // Adicione a navegação para a página de anúncios
         } else if (text == 'Meu perfil') {
-                //Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Cadastro()));
+          // Adicione a navegação para a página de perfil
         } else if (text == 'Sair') {
-                //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>  HomePage()), (Route<dynamic> router) => false);
+          // Faz o logout usando o Firebase Auth
+          FirebaseAuth.instance.signOut().then((_) {
+            // Navega de volta para a página de login e remove a pilha de navegação existente
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Login()),
+                (Route<dynamic> route) => false);
+          }).catchError((error) {
+            print('Erro ao fazer logout: $error');
+          });
         }
-
-        // Ação a ser executada ao clicar no card
-        // Por exemplo, você pode adicionar um Navigator para navegar para uma nova tela
-        // print('$text foi clicado!');
       },
       child: Container(
         width: MediaQuery.of(context).size.width * widthFactor,

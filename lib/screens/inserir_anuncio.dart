@@ -251,10 +251,14 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                         color: Colors.white,
                         fontSize: 20,
                       ),
-                    ), // Define o onPressed como null para tornar o botão não clicável
+                    ),
+                       // Define o onPressed como null para tornar o botão não clicável
                   ),
                 ),
               ),
+            ),
+            const SizedBox(
+              height: 20,
             ),
           ],
         ),

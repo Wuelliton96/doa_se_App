@@ -1,38 +1,46 @@
-Doa_se - Desenvolvimento do Aplicativo de Doações
-Descrição
-O Doa_se é um aplicativo de celular Android que tem como objetivo conectar pessoas que desejam doar com pessoas que também precisam de ajuda. Este repositório documenta o desenvolvimento do aplicativo em colaboração com o professor da CatólicaSC.
+# Doa_se - Desenvolvimento do Aplicativo de Doações
 
-Tecnologias Utilizadas
-Flutter: Um framework de desenvolvimento de aplicativos móveis multiplataforma.
-Firebase: Plataforma de desenvolvimento de aplicativos móveis que fornece recursos de armazenamento e gerenciamento de banco de dados em tempo real.
-Funcionalidades
-O aplicativo Doa_se terá as seguintes funcionalidades principais:
+## Descrição
 
-Registro de Usuário: Os usuários podem criar uma conta no aplicativo, fornecendo informações pessoais básicas.
-Login: Os usuários registrados podem fazer login em suas contas.
-Listagem de Doações: Os usuários podem visualizar as doações disponíveis, incluindo detalhes como tipo de doação, localização e data.
-Solicitação de Doação: Os usuários que precisam de ajuda podem solicitar uma doação específica.
-Doações: Os usuários podem oferecer doações e especificar os itens que desejam doar.
-Mensagens: Os usuários podem se comunicar uns com os outros por meio de mensagens diretas.
-Gerenciamento de Perfil: Os usuários podem atualizar suas informações de perfil e preferências.
-Geolocalização: O aplicativo utilizará a geolocalização para encontrar doações próximas.
-Requisitos
+O Doa_se é um aplicativo para dispositivos Android que visa conectar pessoas dispostas a doar com aquelas que necessitam de ajuda. Este repositório documenta o desenvolvimento do aplicativo em colaboração com o professor da CatólicaSC.
 
+## Tecnologias Utilizadas
+
+- **Flutter**: Um framework de desenvolvimento de aplicativos móveis multiplataforma.
+- **Firebase**: Plataforma de desenvolvimento de aplicativos móveis que oferece recursos de armazenamento e gerenciamento de banco de dados em tempo real.
+
+## Funcionalidades
+
+O aplicativo Doa_se contará com as seguintes funcionalidades principais:
+
+1. **Registro de Usuário**: Os usuários podem criar uma conta no aplicativo, fornecendo informações pessoais básicas.
+2. **Login**: Os usuários registrados podem fazer login em suas contas.
+3. **Listagem de Doações**: Visualização de doações disponíveis, incluindo detalhes como tipo de doação, localização e data.
+4. **Solicitação de Doação**: Os usuários que necessitam de ajuda podem solicitar uma doação específica.
+5. **Doações**: Os usuários podem oferecer doações e especificar os itens que desejam doar.
+6. **Mensagens**: Comunicação direta entre usuários por meio de mensagens.
+7. **Gerenciamento de Perfil**: Atualização de informações de perfil e preferências pelos usuários.
+8. **Geolocalização**: Utilização da geolocalização para encontrar doações próximas.
+
+## Requisitos
 
 Certifique-se de ter as seguintes ferramentas instaladas:
 
-Flutter: O Flutter SDK para desenvolvimento de aplicativos móveis.
-Firebase: A configuração do Firebase para Flutter.
+- Flutter SDK: Para o desenvolvimento de aplicativos móveis.
+- Configuração do Firebase para Flutter.
 
+## Colaboração
 
-Colaboração
-Este projeto está sendo desenvolvido em colaboração com o professor da CatólicaSC. Certifique-se de manter uma comunicação constante com o professor e seguir as diretrizes fornecidas.
+Este projeto está sendo desenvolvido em colaboração com o professor da CatólicaSC. Mantenha uma comunicação constante com o professor e siga as diretrizes fornecidas.
 
-Contribuições
-Contribuições são bem-vindas. Se você deseja contribuir para o desenvolvimento do aplicativo, siga as diretrizes de contribuição definidas no arquivo CONTRIBUTING.md.
+## Contribuições
 
-Licença
+Contribuições são bem-vindas. Se deseja contribuir, siga as diretrizes definidas no arquivo CONTRIBUTING.md.
+
+## Licença
+
 Este projeto está sob a licença MIT. Leia o arquivo LICENSE para obter mais informações.
 
-Contato
-Para obter mais informações sobre o desenvolvimento do aplicativo Doa_se, entre em contato com [seu nome e email].
+## Contato
+
+Para mais informações sobre o desenvolvimento do aplicativo Doa_se, entre em contato com Wuelliton, Heberton e Edson.
