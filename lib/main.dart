@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'services/firebase_options.dart';
 import 'package:doa_se_app/screens/anuncio_home.dart';
 import 'package:doa_se_app/screens/inserir_anuncio.dart';
-import 'package:doa_se_app/screens/login.dart';
-import 'package:doa_se_app/screens/perfil.dart';
+import 'package:doa_se_app/screens/login_usuario.dart';
+import 'package:doa_se_app/screens/perfil_usuario.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

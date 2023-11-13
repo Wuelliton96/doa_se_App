@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:doa_se_app/componentes/decoration_labeText.dart';
-import 'package:doa_se_app/screens/login.dart';
+import 'package:doa_se_app/screens/login_usuario.dart';
 import 'package:doa_se_app/services/autenticacao_servico.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';

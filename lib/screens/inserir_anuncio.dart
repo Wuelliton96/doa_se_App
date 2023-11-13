@@ -4,6 +4,8 @@ import 'package:doa_se_app/models/cep.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:doa_se_app/services/anuncio_service.dart';
 
 class InserirAnuncio extends StatefulWidget {
   const InserirAnuncio({Key? key});
@@ -18,23 +20,25 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
   String? selectedCidade;
   String? selectedBairro;
   File? selectedImage;
-  AddressInfo? addressInfo; // Mantém as informações do endereço obtidas da busca por CEP
-  String? cep; // Mantém o CEP inserido
+  AddressInfo? addressInfo;
+  String? cep;
+  String telefone = '';
   TextEditingController cepController = TextEditingController();
+  AnuncioService _anuncioService = AnuncioService();
 
-  // Método para buscar informações de endereço a partir do CEP usando a ViaCepApi
   Future<void> _fetchAddressFromCEP(String cep) async {
     final info = await ViaCepApi.getAddressInfo(cep);
     if (info != null) {
       setState(() {
-        addressInfo = info; // Atualiza addressInfo com os dados obtidos
-        selectedEstado = info.estado; // Preenche o estado com base nas informações da API
-        selectedCidade = info.cidade; // Preenche a cidade com base nas informações da API
-        selectedBairro = info.bairro; // Preenche o bairro com base nas informações da API
+        addressInfo = info;
+        selectedEstado = info.estado;
+        selectedCidade = info.cidade;
+        selectedBairro = info.bairro;
       });
     } else {
-      // Lide com o caso em que a solicitação à API falhe.
-      // Você pode mostrar uma mensagem de erro ou lidar com isso conforme necessário.
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao obter informações de endereço')),
+      );
     }
   }
 
@@ -44,11 +48,6 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
     'Categoria 3',
     'Categoria 4',
   ];
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   InputDecoration _buildInputDecoration(String labelText) {
     return InputDecoration(
@@ -143,7 +142,6 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      // Quando o botão "Buscar" é pressionado, chame a função para buscar informações
                       _fetchAddressFromCEP(cep!);
                     },
                     child: const Text("Buscar"),
@@ -187,7 +185,6 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                 decoration: _buildInputDecoration("Cidade"),
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: DropdownButtonFormField<String>(
@@ -203,14 +200,26 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                     child: Text(bairro),
                   );
                 }).toList(),
-                decoration: buildInputDecoration("Bairro"),
+                decoration: _buildInputDecoration("Bairro"),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              child: TextFormField(
+                decoration: _buildInputDecoration("Telefone"),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
+                    telefone = value;
+                  });
+                },
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: InkWell(
                 onTap: () {
-                  _pickImage(); // Chama a função para selecionar a imagem
+                  _pickImage();
                 },
                 child: Container(
                   width: 100,
@@ -225,37 +234,30 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
             const SizedBox(
               height: 30,
             ),
-            IgnorePointer(
-              child: Container(
-                height: 60,
-                alignment: Alignment.bottomLeft,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomLeft,
-                    stops: [0.3, 1],
-                    colors: [
-                      Color.fromRGBO(249, 43, 127, 1),
-                      Color.fromRGBO(249, 43, 127, 1),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                ),
-                child: const SizedBox.expand(
-                  child: TextButton(
-                    onPressed: null,
-                    child: Text(
-                      "Inserir",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    ),
-                       // Define o onPressed como null para tornar o botão não clicável
-                  ),
-                ),
-              ),
+            ElevatedButton(
+              onPressed: () async {
+                String? resultado = await _anuncioService.salvarDadosAnuncio(
+                  titulo: 'Título do Anúncio',
+                  descricao: 'Descrição do Anúncio',
+                  categoria: selectedCategoria,
+                  cep: cep!,
+                  estado: selectedEstado,
+                  cidade: selectedCidade,
+                  bairro: selectedBairro,
+                  telefone: telefone,
+                );
+
+                if (resultado == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Anúncio inserido com sucesso')),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Erro ao inserir anúncio: $resultado')),
+                  );
+                }
+              },
+              child: const Text("Inserir"),
             ),
             const SizedBox(
               height: 20,

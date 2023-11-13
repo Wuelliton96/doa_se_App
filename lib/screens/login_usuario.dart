@@ -1,6 +1,6 @@
 import 'package:doa_se_app/main.dart';
 import 'package:doa_se_app/screens/anuncio_home.dart';
-import 'package:doa_se_app/screens/cadastro.dart';
+import 'package:doa_se_app/screens/cadastro_usuario.dart';
 import 'package:doa_se_app/componentes/decoration_labeText.dart';
 import 'package:doa_se_app/services/autenticacao_servico.dart';
 import 'package:flutter/material.dart';
