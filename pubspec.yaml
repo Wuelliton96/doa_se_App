@@ -44,6 +44,7 @@ dependencies:
   cloud_firestore: ^4.12.0
   http: ^1.1.0
   firebase_dynamic_links: ^5.4.3
+  mask_text_input_formatter: ^2.5.0
 
 
 dev_dependencies:

@@ -1,51 +1,39 @@
-// usuario_model.dart
-import 'package:image_picker/image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
 
-class UsuarioModel {
-  String titulo;
-  String descricao;
-  String categoria;
-  String cep;
-  String estado;
-  String cidade;
-  String bairro;
-  String telefone; // Adicionando o campo telefone
-  XFile? imagem;
+class AnuncioService {
+  final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  UsuarioModel({
-    required this.titulo,
-    required this.descricao,
-    required this.categoria,
-    required this.cep,
-    required this.estado,
-    required this.cidade,
-    required this.bairro,
-    required this.telefone,
-    required this.imagem,
-  });
+  Future<String?> salvarDadosAnuncio({
+    required String titulo,
+    required String descricao,
+    required String? categoria,
+    required String cep,
+    required String? estado,
+    required String? cidade,
+    required String? bairro,
+    required String telefone, // Adicione o telefone como parâmetro
+  }) async {
+    try {
+      String id = const Uuid().v1();
+      DateTime dataHoraAtual = DateTime.now();
 
-  UsuarioModel.fromMap(Map<String, dynamic> map)
-      : titulo = map["titulo"],
-        descricao = map["descricao"],
-        categoria = map["categoria"],
-        cep = map["cep"],
-        estado = map["estado"],
-        cidade = map["cidade"],
-        bairro = map["bairro"],
-        telefone = map["telefone"],
-        imagem = map["imagem"];
+      await db.collection("anuncios").doc(id).set({
+        "titulo": titulo,
+        "descricao": descricao,
+        "categoria": categoria,
+        "cep": cep,
+        "estado": estado,
+        "cidade": cidade,
+        "bairro": bairro,
+        "telefone": telefone,
+        "dataHora": dataHoraAtual.toUtc(),
+      });
 
-  Map<String, dynamic> toMap() {
-    return {
-      "titulo": titulo,
-      "descricao": descricao,
-      "categoria": categoria,
-      "cep": cep,
-      "estado": estado,
-      "cidade": cidade,
-      "bairro": bairro,
-      "telefone": telefone,
-      "imagem": imagem,
-    };
+      return null;
+    } on FirebaseAuthException catch (e) {
+      return e.message;
+    }
   }
 }

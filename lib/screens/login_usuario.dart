@@ -1,7 +1,7 @@
 import 'package:doa_se_app/main.dart';
-import 'package:doa_se_app/screens/anuncio_home.dart';
 import 'package:doa_se_app/screens/cadastro_usuario.dart';
 import 'package:doa_se_app/componentes/decoration_labeText.dart';
+import 'package:doa_se_app/screens/redefinir_senha.dart';
 import 'package:doa_se_app/services/autenticacao_servico.dart';
 import 'package:flutter/material.dart';
 import 'package:doa_se_app/componentes/mensagem.dart';
@@ -48,14 +48,14 @@ class _LoginState extends State<Login> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset("assets/doa-se.png", height: 250, width: 250),
+                      Image.asset("assets/doa-se.png", height: 200, width: 200),
                       const SizedBox(
-                        height: 70,
+                        height: 50,
                       ),
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.text,
-                        decoration: getDecorationLabelText("E-mail"),
+                        decoration: getDecorationLabelText("", "E-mail"),
                         validator: (String? value) {
                           if (value == null) {
                             // Condicional que não pode ser apagado
@@ -73,11 +73,11 @@ class _LoginState extends State<Login> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       TextFormField(
                         controller: _senhaController,
                         keyboardType: TextInputType.emailAddress,
-                        decoration: getDecorationLabelText("Senha"),
+                        decoration: getDecorationLabelText("", "Senha"),
                         obscureText: true,
                         validator: (String? value) {
                           if (value == null) {
@@ -93,46 +93,66 @@ class _LoginState extends State<Login> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
                       TextButton(
                         style: TextButton.styleFrom(
                           textStyle: const TextStyle(
                             fontSize: 15,
                           ),
+                          foregroundColor: Colors.black
                         ),
                         onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Cadastro())),
+                                builder: (context) => const RedefinirSenha())),
                         child: const Text("Esqueci minha senha?"),
                       ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(150, 50),
-                          backgroundColor: Color.fromARGB(255, 219, 219, 219),
-                          foregroundColor: Colors.black,
-                          textStyle: const TextStyle(fontSize: 17),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          textStyle: const TextStyle(
+                            fontSize: 15,
+                          ),
+                          foregroundColor: Colors.black
                         ),
-                        onPressed: () {
-                          Navigator.push(
+                        onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const Cadastro(),
-                            ),
-                          );
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/google.png",
-                              height: 25,
-                            ),
-                            const Text(" Entrar com Google"),
-                          ],
-                        ),
+                                builder: (context) => const Cadastro())),
+                        child: const Text("Cadastrar-se?"),
                       ),
                       const SizedBox(height: 12),
+                      SizedBox(
+                        width: 240,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(150, 50),
+                            backgroundColor: Color.fromARGB(255, 219, 219, 219),
+                            foregroundColor: Colors.black,
+                            textStyle: const TextStyle(fontSize: 17),
+                          ),
+                          onPressed: () {
+                            /*
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Cadastro(),
+                              ),
+                            );
+                            */
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/google.png",
+                                height: 25,
+                              ),
+                              const Text(" Entrar com Google"),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(200, 50),
@@ -143,6 +163,7 @@ class _LoginState extends State<Login> {
                         onPressed: () => botaoEntrarClicado(),
                         child: const Text("Entrar"),
                       ),
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ),

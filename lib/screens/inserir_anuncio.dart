@@ -1,47 +1,39 @@
-import 'package:doa_se_app/api/api_cep.dart';
-import 'package:doa_se_app/componentes/cep_decoretion.dart';
-import 'package:doa_se_app/models/cep.dart';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:doa_se_app/api/api_cep.dart';
+import 'package:doa_se_app/componentes/decoration_labeText.dart';
+import 'package:doa_se_app/models/cep_model.dart';
+import 'package:doa_se_app/screens/login_usuario.dart';
+import 'package:doa_se_app/models/anuncio_model.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
-import 'package:doa_se_app/services/anuncio_service.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:doa_se_app/componentes/mensagem.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+
 
 class InserirAnuncio extends StatefulWidget {
-  const InserirAnuncio({Key? key});
+  const InserirAnuncio({super.key});
 
   @override
-  _InserirAnuncioState createState() => _InserirAnuncioState();
+  State<InserirAnuncio> createState() => _InserirAnuncioState();
 }
 
 class _InserirAnuncioState extends State<InserirAnuncio> {
+  final _formKey = GlobalKey<FormState>();
+  final AnuncioService anuncioService = AnuncioService();
+
   String? selectedCategoria;
   String? selectedEstado;
   String? selectedCidade;
   String? selectedBairro;
-  File? selectedImage;
-  AddressInfo? addressInfo;
-  String? cep;
-  String telefone = '';
-  TextEditingController cepController = TextEditingController();
-  AnuncioService _anuncioService = AnuncioService();
-
-  Future<void> _fetchAddressFromCEP(String cep) async {
-    final info = await ViaCepApi.getAddressInfo(cep);
-    if (info != null) {
-      setState(() {
-        addressInfo = info;
-        selectedEstado = info.estado;
-        selectedCidade = info.cidade;
-        selectedBairro = info.bairro;
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao obter informações de endereço')),
-      );
-    }
-  }
-
+  AddressInfo? addressInfo; // Mantém as informações do endereço obtidas da busca por CEP
+  String? cep; // Mantém o CEP inserido
+  final TextEditingController _telefoneController = TextEditingController();
+  final TextEditingController _cepController = TextEditingController();
+  final TextEditingController _tituloAnuncioController = TextEditingController();
+  final TextEditingController _descricaoController = TextEditingController();
+  
   List<String> categorias = [
     'Categoria 1',
     'Categoria 2',
@@ -49,29 +41,79 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
     'Categoria 4',
   ];
 
-  InputDecoration _buildInputDecoration(String labelText) {
-    return InputDecoration(
-      labelText: labelText,
-      labelStyle: const TextStyle(
-        color: Colors.black38,
-        fontWeight: FontWeight.w400,
-        fontSize: 20,
+  // Método para buscar informações de endereço a partir do CEP usando a ViaCepApi
+  Future<void> _fetchAddressFromCEP(String cep) async {
+    final info = await ViaCepApi.getAddressInfo(cep);
+    if (info != null) {
+      setState(() {
+        addressInfo = info; 
+        selectedEstado = info.estado; 
+        selectedCidade = info.cidade; 
+        selectedBairro = info.bairro; 
+      });
+    } else {
+      // Lide com o caso em que a solicitação à API falhe.
+      // Você pode mostrar uma mensagem de erro ou lidar com isso conforme necessário.
+    }
+  }
+
+  //Metodo para alerta da mensagem de cadastro com sucesso
+  void _showSuccessMessage() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Anúncio criado com sucesso!'),
+        actions: [
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const Login()),
+                  (Route<dynamic> router) => false);
+            },
+          )
+        ],
       ),
-      border: OutlineInputBorder(),
-      hintText: 'Digite a $labelText',
     );
   }
 
-  Future<void> _pickImage() async {
-    final imagePicker = ImagePicker();
-    XFile? pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+  // Variável para armazenar a imagem selecionada pelo usuário
+  XFile? arquivoSelecionado;
 
-    if (pickedFile != null) {
-      File selectedImage = File(pickedFile.path);
+  // Função que permite ao usuário selecionar uma imagem da galeria
+  Future<void> selecionarArquivo() async {
+    final imagem = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (imagem != null) {
       setState(() {
-        this.selectedImage = selectedImage;
+        arquivoSelecionado = imagem;
       });
     }
+  }
+
+  // método responsável por enviar imagem selecionada para o Storage do Firebase
+  Future<void> fazerUploadImagem() async {
+    if (arquivoSelecionado == null) {
+      print('Nenhum arquivo selecionado.');
+      return;
+    }
+
+    final Reference storageRef = FirebaseStorage.instance
+        .ref()
+        .child('anuncio_images/img-${DateTime.now().toString()}.jpg');
+
+    final UploadTask uploadTask =
+        storageRef.putFile(File(arquivoSelecionado!.path));
+
+    uploadTask.whenComplete(() {
+      print('Upload concluído com sucesso.');
+    }).catchError((error) {
+      print('Erro no upload: $error');
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -80,191 +122,299 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
       appBar: AppBar(
         title: const Text('Inserir Anúncio'),
         centerTitle: true,
+        elevation: 0,
       ),
-      body: Container(
-        padding: const EdgeInsets.only(
-          top: 30,
-          left: 30,
-          right: 30,
-        ),
-        color: Colors.white,
-        child: ListView(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Título Anúncio',
-                  border: OutlineInputBorder(),
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Form(
+              key: _formKey,
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 20,),
+                      TextFormField(
+                        keyboardType: TextInputType.text,
+                        controller: _tituloAnuncioController,
+                        decoration: getDecorationLabelText("", "Título Anúncio"),
+                        inputFormatters: [LengthLimitingTextInputFormatter(40)],
+                        validator: (String? value) {
+                          if (value == null) {    // Condicional que não pode ser apagado
+                            return "";
+                          }
+                          if (value.isEmpty) {    // Verifica se o campo está vazio
+                            return "*Campo obrigatório";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        keyboardType: TextInputType.multiline,
+                        controller: _descricaoController,
+                        decoration: getDecorationLabelText("","Descrição"),
+                        maxLines: 5,
+                        maxLength: 250,
+                        validator: (String? value) {
+                          if (value == null) {    // Condicional que não pode ser apagado
+                            return ""; 
+                          }
+                          if (value.isEmpty) {
+                            return "*Campo obrigatório";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      DropdownButtonFormField<String>(
+                        value: selectedCategoria,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedCategoria = newValue;
+                          });
+                        },
+                        items: categorias.map((String categoria) {
+                          return DropdownMenuItem<String>(
+                            value: categoria,
+                            child: Text(categoria),
+                          );
+                        }).toList(),
+                        decoration: getDecorationLabelText("","Categoria"),
+                        validator: (String? value) {
+                          if (value == null) { 
+                            return "*Campo obrigatório";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [MaskTextInputFormatter(
+                          mask: '(##) # ####-####',
+                          filter: {"#": RegExp(r'[0-9]')},
+                        ),],
+                        controller: _telefoneController,
+                        decoration: getDecorationLabelText("", "Telefone"),
+                        validator: (String? value) {
+                          if (value == null) {    // Condicional que não pode ser apagado
+                            return "";
+                          }
+                          if (value.isEmpty) {
+                            return "*Campo obrigatório";
+                          }
+                          if (value.length < 16) {
+                            return "Contato incorreto";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 240,
+                            child: TextFormField(
+                              keyboardType: const TextInputType.numberWithOptions(),
+                              controller: _cepController,
+                              decoration: getDecorationLabelText("","CEP"),
+                              onChanged: (value) {
+                                setState(() {
+                                  cep = value;
+                                });
+                              },
+                              validator: (String? value) {
+                                if (value == null) {    // Condicional que não pode ser apagado
+                                  return "";
+                                }
+                                if (value.isEmpty) {
+                                  return "*Campo obrigatório";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 10,),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Quando o botão "Buscar" é pressionado, chame a função para buscar informações
+                              _fetchAddressFromCEP(cep!);
+                            },
+                            child: const Text("Buscar"),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        keyboardType: TextInputType.text,
+                        controller: _tituloAnuncioController,
+                        decoration: getDecorationLabelText("", "Estado"),
+                        validator: (String? value) {
+                          if (value == null) {    // Condicional que não pode ser apagado
+                            return "";
+                          }
+                          if (value.isEmpty) {    // Verifica se o campo está vazio
+                            return "*Campo obrigatório";
+                          }
+                          return null;
+                        },
+                      ),
+                      DropdownButtonFormField<String>(
+                        value: selectedEstado,    
+                        decoration: getDecorationLabelText("","Estado"),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedEstado = newValue;
+                          });
+                        },
+                        items: [addressInfo?.estado ?? ''].map((String estado) {
+                          return DropdownMenuItem<String>(
+                            value: estado,
+                            child: Text(estado),
+                          );
+                        }).toList(),
+                        validator: (String? value) {
+                          if (value == null) {    // Condicional que não pode ser apagado
+                            return "*Campo obrigatório";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      DropdownButtonFormField<String>(
+                        value: selectedCidade,    
+                        decoration: getDecorationLabelText("","Cidade"),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedCidade = newValue;
+                          });
+                        },
+                        items: [addressInfo?.cidade ?? ''].map((String cidade) {
+                          return DropdownMenuItem<String>(
+                            value: cidade,
+                            child: Text(cidade),
+                          );
+                        }).toList(),
+                        validator: (String? value) {
+                          if (value == null) {    // Condicional que não pode ser apagado
+                            return "*Campo obrigatório";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      DropdownButtonFormField<String>(
+                        value: selectedBairro,    
+                        decoration: getDecorationLabelText("","Bairro"),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedBairro = newValue;
+                          });
+                        },
+                        items: [addressInfo?.bairro ?? ''].map((String bairro) {
+                          return DropdownMenuItem<String>(
+                            value: bairro,
+                            child: Text(bairro),
+                          );
+                        }).toList(),
+                        validator: (String? value) {
+                          if (value == null) {    // Condicional que não pode ser apagado
+                            return "*Campo obrigatório";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                        child: InkWell(
+                          onTap: () {
+                            selecionarArquivo(); // Permite ao usuário selecionar uma imagem
+                          },
+                          child: Column(
+                            children: [
+                              const Text(
+                                "Inserir Foto",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Container(
+                                width: 150,
+                                height: 150,
+                                color: Colors.grey,
+                                child: arquivoSelecionado != null
+                                    ? Image.file(File(arquivoSelecionado!
+                                        .path)) // Exibe a imagem selecionada
+                                    : const Icon(Icons.camera_alt,
+                                        size: 50,
+                                        color: Colors
+                                            .white), // Exibe um ícone de câmera se nenhuma imagem for selecionada
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(200, 50),
+                          textStyle: const TextStyle(fontSize: 22),
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                        ),
+                        onPressed: () => botaoCriarAnuncioClicado(),
+                        child: const Text("Criar Anúncio"),
+                      ),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: TextField(
-                maxLines: 5,
-                decoration: _buildInputDecoration("Descrição"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: DropdownButtonFormField<String>(
-                value: selectedCategoria,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedCategoria = newValue;
-                  });
-                },
-                items: categorias.map((String categoria) {
-                  return DropdownMenuItem<String>(
-                    value: categoria,
-                    child: Text(categoria),
-                  );
-                }).toList(),
-                decoration: _buildInputDecoration("Categoria"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: cepController,
-                      decoration: _buildInputDecoration("CEP"),
-                      keyboardType: const TextInputType.numberWithOptions(),
-                      onChanged: (value) {
-                        setState(() {
-                          cep = value;
-                        });
-                      },
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _fetchAddressFromCEP(cep!);
-                    },
-                    child: const Text("Buscar"),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: DropdownButtonFormField<String>(
-                value: selectedEstado,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedEstado = newValue;
-                  });
-                },
-                items: [addressInfo?.estado ?? ''].map((String estado) {
-                  return DropdownMenuItem<String>(
-                    value: estado,
-                    child: Text(estado),
-                  );
-                }).toList(),
-                decoration: _buildInputDecoration("Estado"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: DropdownButtonFormField<String>(
-                value: selectedCidade,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedCidade = newValue;
-                  });
-                },
-                items: [addressInfo?.cidade ?? ''].map((String cidade) {
-                  return DropdownMenuItem<String>(
-                    value: cidade,
-                    child: Text(cidade),
-                  );
-                }).toList(),
-                decoration: _buildInputDecoration("Cidade"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: DropdownButtonFormField<String>(
-                value: selectedBairro,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedBairro = newValue;
-                  });
-                },
-                items: [addressInfo?.bairro ?? ''].map((String bairro) {
-                  return DropdownMenuItem<String>(
-                    value: bairro,
-                    child: Text(bairro),
-                  );
-                }).toList(),
-                decoration: _buildInputDecoration("Bairro"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: TextFormField(
-                decoration: _buildInputDecoration("Telefone"),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  setState(() {
-                    telefone = value;
-                  });
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: InkWell(
-                onTap: () {
-                  _pickImage();
-                },
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  color: Colors.grey,
-                  child: selectedImage != null
-                      ? Image.file(selectedImage!)
-                      : const Icon(Icons.camera_alt, size: 50, color: Colors.white),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                String? resultado = await _anuncioService.salvarDadosAnuncio(
-                  titulo: 'Título do Anúncio',
-                  descricao: 'Descrição do Anúncio',
-                  categoria: selectedCategoria,
-                  cep: cep!,
-                  estado: selectedEstado,
-                  cidade: selectedCidade,
-                  bairro: selectedBairro,
-                  telefone: telefone,
-                );
-
-                if (resultado == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Anúncio inserido com sucesso')),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Erro ao inserir anúncio: $resultado')),
-                  );
-                }
-              },
-              child: const Text("Inserir"),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+
+  void botaoCriarAnuncioClicado() {
+    String tituloAnuncio = _tituloAnuncioController.text;
+    String descricaoAnuncio = _descricaoController.text;
+    String telefone = _telefoneController.text;
+    String cep = _cepController.text;
+    String? categoriaAnuncio = selectedCategoria; 
+    String? estadoSelecionado = selectedEstado;
+    String? cidadeSelecionado = selectedCidade;
+    String? bairroSelecionado = selectedBairro;
+
+    if (_formKey.currentState!.validate()) {
+      anuncioService.salvarDadosAnuncio(
+        titulo: tituloAnuncio, 
+        descricao: descricaoAnuncio, 
+        categoria: categoriaAnuncio, 
+        telefone: telefone, 
+        cep: cep, 
+        estado: estadoSelecionado, 
+        cidade: cidadeSelecionado, 
+        bairro: bairroSelecionado).then((String? erro) {
+          if (erro != null) {
+            mostrarMensagem(context: context, texto: "Erro ao criar o anúncio.");
+          } else {
+            fazerUploadImagem();
+            _showSuccessMessage();
+          }
+        });
+    }
+  }
 }
+
+
+
+

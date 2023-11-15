@@ -1,4 +1,4 @@
-import 'package:doa_se_app/screens/itemanuncio.dart';
+import 'package:doa_se_app/screens/item_anuncio.dart';
 import 'package:flutter/material.dart';
 
 class ItemList extends StatelessWidget {

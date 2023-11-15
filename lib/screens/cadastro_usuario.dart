@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:doa_se_app/componentes/mensagem.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class Cadastro extends StatefulWidget {
   const Cadastro({super.key});
@@ -21,6 +22,7 @@ class _CadastroState extends State<Cadastro> {
   final TextEditingController _nomeCompletoController = TextEditingController();
   final TextEditingController _nomeUsuarioController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _contatoController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
   final TextEditingController _confirmarSenhaController =
       TextEditingController();
@@ -113,14 +115,14 @@ class _CadastroState extends State<Cadastro> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset("assets/doa-se.png", height: 250, width: 250),
+                      Image.asset("assets/doa-se.png", height: 200, width: 200),
                       const SizedBox(
-                        height: 70,
+                        height: 50,
                       ),
                       TextFormField(
-                        controller: _nomeCompletoController,
                         keyboardType: TextInputType.text,
-                        decoration: getDecorationLabelText('Nome Completo'),
+                        controller: _nomeCompletoController,
+                        decoration: getDecorationLabelText("", "Nome Completo"),
                         validator: (String? value) {
                           if (value == null) {    // Condicional que não pode ser apagado
                             return "";
@@ -131,11 +133,11 @@ class _CadastroState extends State<Cadastro> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       TextFormField(
-                        controller: _nomeUsuarioController,
                         keyboardType: TextInputType.text,
-                        decoration: getDecorationLabelText('Nome Usuário'),
+                        controller: _nomeUsuarioController,
+                        decoration: getDecorationLabelText("", "Nome Usuário"),
                         validator: (String? value) {
                           if (value == null) {    // Condicional que não pode ser apagado
                             return ""; 
@@ -146,10 +148,11 @@ class _CadastroState extends State<Cadastro> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       TextFormField(
+                        keyboardType: TextInputType.text,
                         controller: _emailController,
-                        decoration: getDecorationLabelText("E-mail"),
+                        decoration: getDecorationLabelText("", "E-mail"),
                         validator: (String? value) {
                           if (value == null) {    // Condicional que não pode ser apagado
                             return "";
@@ -166,10 +169,34 @@ class _CadastroState extends State<Cadastro> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       TextFormField(
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [MaskTextInputFormatter(
+                          mask: '(##) # ####-####',
+                          filter: {"#": RegExp(r'[0-9]')},
+                        ),],
+                        controller: _contatoController,
+                        decoration: getDecorationLabelText("", "Contato"),
+                        validator: (String? value) {
+                          if (value == null) {    // Condicional que não pode ser apagado
+                            return "";
+                          }
+                          if (value.isEmpty) {
+                            return "*Campo obrigatório";
+                          }
+                          if (value.length < 16) {
+                            return "Contato incorreto";
+                          }
+                          return null;
+                        },
+                        
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        keyboardType: TextInputType.text,
                         controller: _senhaController,
-                        decoration: getDecorationLabelText("Senha"),
+                        decoration: getDecorationLabelText("", "Senha"),
                         obscureText: true,
                         validator: (String? value) {
                           if (value == null) {    // Condicional que não pode ser apagado
@@ -184,10 +211,11 @@ class _CadastroState extends State<Cadastro> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       TextFormField(
+                        keyboardType: TextInputType.text,
                         controller: _confirmarSenhaController,
-                        decoration: getDecorationLabelText("Confirmar Senha"),
+                        decoration: getDecorationLabelText("", "Confirmar Senha"),
                         obscureText: true,
                         validator: (String? value) {
                           if (value == null) {    // Condicional que não pode ser apagado
@@ -197,7 +225,10 @@ class _CadastroState extends State<Cadastro> {
                             return "*Campo obrigatório";
                           }
                           if (value.length < 5) {
-                            return "A senha é muito curta";
+                            return "A senha é muito curta!";
+                          }
+                          if (value.length > 11) {
+                            return "A senha é muito grande!";
                           }
                           return null;
                         },
@@ -217,8 +248,8 @@ class _CadastroState extends State<Cadastro> {
                               ),
                             ),
                             Container(
-                              width: 100,
-                              height: 100,
+                              width: 150,
+                              height: 150,
                               color: Colors.grey,
                               child: arquivoSelecionado != null
                                   ? Image.file(File(arquivoSelecionado!
@@ -242,6 +273,7 @@ class _CadastroState extends State<Cadastro> {
                         onPressed: () => botaoCadastrarClicado(),
                         child: const Text("Cadastrar"),
                       ),
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
@@ -253,70 +285,90 @@ class _CadastroState extends State<Cadastro> {
     );
   }
 
-  // Função que é chamada quando o botão de cadastro é clicado
   void botaoCadastrarClicado() {
-    // Obter os valores inseridos nos campos do formulário
+    // Obtendo os valores dos campos do formulário
     String nomeCompleto = _nomeCompletoController.text;
     String nomeUsuario = _nomeUsuarioController.text;
     String email = _emailController.text;
+    String contato = _contatoController.text;
     String senha = _senhaController.text;
     String confirmarSenha = _confirmarSenhaController.text;
 
-    // Verificar se o formulário foi validado com sucesso
+    // Validando o formulário e se uma imagem foi selecionada
     if (_formKey.currentState!.validate()) {
       print("Formulário validado com sucesso!");
-      // Verificar se a senha e a confirmação de senha coincidem
+      // Verificando se a senha e a confirmação de senha são iguais
       if (senha == confirmarSenha) {
-        // Verificar se o e-mail já está em uso
-        _autenticacaoServico.verificarEmail(email).then((bool? erro) {
+        // Verificando se o nome completo já existe no banco de dados
+        _autenticacaoServico.verificarNomeCompletoFirestone(nomeCompleto: nomeCompleto)
+        .then((bool? erro) {
           if (erro == true) {
-            // O e-mail já está em uso, exibir uma mensagem de erro
-            mostrarMensagem(
-                context: context, texto: "Esse e-mail já está em uso!");
+            mostrarMensagem(context: context, texto: "Nome completo já exitente!");
           } else {
-            // Cadastrar o usuário no Firebase Authentication
-            _autenticacaoServico
-                .cadastrarUsuario(email: email, senha: senha)
-                .then((String? erro) {
-              if (erro != null) {
-                // Ocorreu um erro no cadastro, exibir uma mensagem de erro
-                mostrarMensagem(
-                    context: context, texto: "Esse e-mail já está em uso!");
+            // Verificando se o nome de usuário já existe no banco de dados
+            _autenticacaoServico.verificarNomeUsuarioFirestone(nomeUsuario: nomeUsuario).then((bool? erro) {
+              if (erro == true) {
+                mostrarMensagem(context: context, texto: "Nome de usuário já exitente!");
               } else {
-                // Salvar os dados do usuário no Firestore
-                _autenticacaoServico
-                    .salvarDados(
-                        email: email,
-                        nomeCompleto: nomeCompleto,
-                        nomeUsuario: nomeUsuario,
-                        senha: senha)
-                    .then((String? erro) {
-                  if (erro != null) {
-                    // Ocorreu um erro ao salvar os dados, exibir uma mensagem de erro
-                    mostrarMensagem(
-                        context: context, texto: "Cadastro inválido!");
+                // Verificando se o e-mail já está em uso
+                _autenticacaoServico.verificarEmailFirestone(email: email)
+                .then((bool? erro) {
+                  if (erro == true) {
+                    mostrarMensagem(context: context, texto: "Esse e-mail já está em uso!");
+                  } else {
+                    // Verificando se o número de contato já existe
+                    _autenticacaoServico.verificarContatoFirestone(contato: contato).then((bool? erro) {
+                      if (erro == true) {
+                        mostrarMensagem(context: context, texto: "Número de contato já existente!");
+                      } else {
+                        // Cadastrando o usuário e salvando os dados
+                        _autenticacaoServico.cadastrarUsuario(email: email, senha: senha)
+                        .then((String? erro) {
+                          if (erro != null) {
+                            mostrarMensagem(context: context, texto: "Esse e-mail já está em uso!"); 
+                          } else {
+                            _autenticacaoServico.salvarDados(
+                              email: email,
+                              contato: contato,
+                              nomeCompleto: nomeCompleto,
+                              nomeUsuario: nomeUsuario,
+                              senha: senha)
+                              .then((String? erro) {
+                                if (erro != null) {
+                                  mostrarMensagem(context: context, texto: "Cadastro inválido!");
+                                }
+                            });
+                            _autenticacaoServico.enviarLinkParaEmail(email);
+                            fazerUploadImagem();
+                            _showSuccessMessage(_emailController.text);
+                          }
+                        });
+                      }
+                    });
                   }
                 });
-                // Enviar um link de verificação para o e-mail do usuário
-                _autenticacaoServico.enviarLinkParaEmail(email);
-                // Realizar o upload da imagem do perfil
-                fazerUploadImagem();
-                // Exibir uma mensagem de sucesso
-                _showSuccessMessage(_emailController.text);
               }
             });
           }
         });
       } else {
-        // A senha e a confirmação de senha não coincidem, exibir uma mensagem de erro
+        // A senha e a confirmação de senha não são iguais
         mostrarMensagem(context: context, texto: "A senha está diferente!");
       }
     } else {
-      // O formulário não foi validado com sucesso, exibir uma mensagem de erro
-      mostrarMensagem(
-          context: context, texto: "Selecione uma imagem para perfil!");
+      // Uma imagem não foi selecionada
+      mostrarMensagem(context: context, texto: "Selecione uma imagem de perfil!");
     }
   }
 }
 
-// && arquivoSelecionado != null
+
+
+// acrescentar na condicional if o "&& arquivoSelecionado != null".
+
+/*substitua pelo código abaixo:
+} else if (_formKey.currentState!.validate() && arquivoSelecionado == null) {
+  // O formulário não foi validado com sucesso, exibir uma mensagem de erro
+  mostrarMensagem(context: context, texto: "Selecione uma imagem de perfil!");
+}
+*/

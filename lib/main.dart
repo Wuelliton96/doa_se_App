@@ -23,7 +23,7 @@ class Doase extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: AuthenticationWrapper(),
+      home: InserirAnuncio(),
     );
   }
 }
