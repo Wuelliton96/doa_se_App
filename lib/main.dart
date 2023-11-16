@@ -23,7 +23,7 @@ class Doase extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: InserirAnuncio(),
+      home: AuthenticationWrapper(),
     );
   }
 }
@@ -47,7 +47,10 @@ class AuthenticationWrapper extends StatelessWidget {
 }
 
 class HomePag extends StatefulWidget {
+  const HomePag({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _HomePagState createState() => _HomePagState();
 }
 
@@ -72,8 +75,8 @@ class _HomePagState extends State<HomePag> {
             _currentIndex = index;
           });
         },
-        backgroundColor: Color.fromARGB(255, 15, 14, 14),
-        selectedItemColor: Color.fromARGB(255, 0, 0, 0),
+        backgroundColor: const Color.fromARGB(255, 15, 14, 14),
+        selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
         unselectedItemColor: const Color.fromARGB(255, 122, 38, 38),
         items: const [
           BottomNavigationBarItem(
@@ -99,15 +102,19 @@ class _HomePagState extends State<HomePag> {
 }
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: AnuncioHome(),
     );
   }
 }
 
 class AdPage extends StatelessWidget {
+  const AdPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return const Center(
@@ -117,6 +124,8 @@ class AdPage extends StatelessWidget {
 }
 
 class MessagesPage extends StatelessWidget {
+  const MessagesPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return const Center(
@@ -126,6 +135,8 @@ class MessagesPage extends StatelessWidget {
 }
 
 class UserProfilePage extends StatelessWidget {
+  const UserProfilePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(

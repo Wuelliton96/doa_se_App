@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:doa_se_app/api/api_cep.dart';
 import 'package:doa_se_app/componentes/decoration_labeText.dart';
+import 'package:doa_se_app/main.dart';
 import 'package:doa_se_app/models/cep_model.dart';
-import 'package:doa_se_app/screens/login_usuario.dart';
 import 'package:doa_se_app/models/anuncio_model.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -68,7 +68,7 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
             child: const Text('OK'),
             onPressed: () {
               Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const Login()),
+                  MaterialPageRoute(builder: (context) => HomePag()),
                   (Route<dynamic> router) => false);
             },
           )
@@ -250,20 +250,6 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      TextFormField(
-                        keyboardType: TextInputType.text,
-                        controller: _tituloAnuncioController,
-                        decoration: getDecorationLabelText("", "Estado"),
-                        validator: (String? value) {
-                          if (value == null) {    // Condicional que não pode ser apagado
-                            return "";
-                          }
-                          if (value.isEmpty) {    // Verifica se o campo está vazio
-                            return "*Campo obrigatório";
-                          }
-                          return null;
-                        },
-                      ),
                       DropdownButtonFormField<String>(
                         value: selectedEstado,    
                         decoration: getDecorationLabelText("","Estado"),
