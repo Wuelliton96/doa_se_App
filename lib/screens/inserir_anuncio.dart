@@ -68,7 +68,7 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
             child: const Text('OK'),
             onPressed: () {
               Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => HomePag()),
+                  MaterialPageRoute(builder: (context) => HomePage()),
                   (Route<dynamic> router) => false);
             },
           )

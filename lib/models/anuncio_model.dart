@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 
 class AnuncioService {
   final FirebaseFirestore db = FirebaseFirestore.instance;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   Future<String?> salvarDadosAnuncio({
     required String titulo,
@@ -16,21 +17,27 @@ class AnuncioService {
     required String telefone, // Adicione o telefone como parâmetro
   }) async {
     try {
-      String id = const Uuid().v1();
       DateTime dataHoraAtual = DateTime.now();
-
-      await db.collection("anuncios").doc(id).set({
-        "titulo": titulo,
-        "descricao": descricao,
-        "categoria": categoria,
-        "cep": cep,
-        "estado": estado,
-        "cidade": cidade,
-        "bairro": bairro,
-        "telefone": telefone,
-        "dataHora": dataHoraAtual.toUtc(),
-      });
-
+      User? user = _firebaseAuth.currentUser;
+      if (user != null) {
+        String idUser = user.uid;
+        String idRandom = const Uuid().v1();
+        await db
+          .collection("meus_anuncios")
+          .doc(idUser)
+          .collection("anuncios")
+          .doc(idRandom).set({
+            "titulo": titulo,
+            "descricao": descricao,
+            "categoria": categoria,
+            "cep": cep,
+            "estado": estado,
+            "cidade": cidade,
+            "bairro": bairro,
+            "telefone": telefone,
+            "dataHora": dataHoraAtual.toUtc(),
+        });
+      }
       return null;
     } on FirebaseAuthException catch (e) {
       return e.message;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Itemanuncio extends StatelessWidget {
-  const Itemanuncio({Key? key}) : super(key: key);
+class ItemAnuncio extends StatelessWidget {
+  const ItemAnuncio({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

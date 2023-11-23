@@ -14,7 +14,7 @@ class ItemList extends StatelessWidget {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {
-              return Itemanuncio(); // navega para tela item anuncio
+              return ItemAnuncio(); // navega para tela item anuncio
             },
           ),
         );

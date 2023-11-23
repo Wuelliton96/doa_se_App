@@ -23,7 +23,7 @@ class Doase extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: AuthenticationWrapper(),
+      home: Login(),
     );
   }
 }
@@ -48,7 +48,7 @@ class AuthenticationWrapper extends StatelessWidget {
 
 class HomePag extends StatefulWidget {
   const HomePag({super.key});
-
+  
   @override
   // ignore: library_private_types_in_public_api
   _HomePagState createState() => _HomePagState();
@@ -144,3 +144,4 @@ class UserProfilePage extends StatelessWidget {
     );
   }
 }
+

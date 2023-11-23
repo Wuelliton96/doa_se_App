@@ -1,6 +1,8 @@
 import 'package:doa_se_app/main.dart';
 import 'package:doa_se_app/screens/cadastro_usuario.dart';
 import 'package:doa_se_app/componentes/decoration_labeText.dart';
+import 'package:doa_se_app/screens/inserir_anuncio.dart';
+import 'package:doa_se_app/screens/perfil_usuario.dart';
 import 'package:doa_se_app/screens/redefinir_senha.dart';
 import 'package:doa_se_app/services/autenticacao_servico.dart';
 import 'package:flutter/material.dart';

@@ -9,7 +9,7 @@ class Usuario extends StatefulWidget {
 }
 
 class _UsuarioState extends State<Usuario> {
-  String userName = 'Carregando...';
+  String userName = '';
 
   @override
   void initState() {
@@ -22,13 +22,14 @@ class _UsuarioState extends State<Usuario> {
 
     if (user != null) {
       FirebaseFirestore.instance
-          .collection('usuario')
+          .collection('cadastro_user')
           .doc(user.uid)
           .get()
           .then((DocumentSnapshot documentSnapshot) {
         if (documentSnapshot.exists) {
           setState(() {
-            userName = documentSnapshot['nome_usuario'] ?? 'Nome não disponível';
+            userName =
+                documentSnapshot['nome_usuario'] ?? 'Nome não disponível';
           });
         }
       }).catchError((error) {
