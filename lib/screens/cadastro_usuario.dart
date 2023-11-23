@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doa_se_app/componentes/decoration_labeText.dart';
-import 'package:doa_se_app/models/usuario_model.dart';
+import 'package:doa_se_app/services/usuario_service.dart';
 import 'package:doa_se_app/screens/login_usuario.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -286,7 +286,7 @@ class _CadastroState extends State<Cadastro> {
     String confirmarSenha = _confirmarSenhaController.text;
 
     // Validando o formulário e se uma imagem foi selecionada
-    if (_formKey.currentState!.validate() && arquivoSelecionado != null) {
+    if (_formKey.currentState!.validate()) {
       print("Formulário validado com sucesso!");
       // Verificando se a senha e a confirmação de senha são iguais
       if (senha == confirmarSenha) {
@@ -294,7 +294,7 @@ class _CadastroState extends State<Cadastro> {
         _usuarioModel
             .verificarNomeCompletoFirestone(nomeCompleto: nomeCompleto)
             .then((bool? erro) {
-          if (erro == false) {
+          if (erro == true) {
             mostrarMensagem(
                 context: context, texto: "Nome completo já exitente!");
           } else {
@@ -302,7 +302,7 @@ class _CadastroState extends State<Cadastro> {
             _usuarioModel
                 .verificarNomeUsuarioFirestone(nomeUsuario: nomeUsuario)
                 .then((bool? erro) {
-              if (erro == false) {
+              if (erro == true) {
                 mostrarMensagem(
                     context: context, texto: "Nome de usuário já exitente!");
               } else {
@@ -310,7 +310,7 @@ class _CadastroState extends State<Cadastro> {
                 _usuarioModel
                     .verificarEmailFirestone(email: email)
                     .then((bool? erro) {
-                  if (erro == false) {
+                  if (erro == true) {
                     mostrarMensagem(
                         context: context, texto: "Esse e-mail já está em uso!");
                   } else {
@@ -318,7 +318,7 @@ class _CadastroState extends State<Cadastro> {
                     _usuarioModel
                         .verificarContatoFirestone(contato: contato)
                         .then((bool? erro) {
-                      if (erro == false) {
+                      if (erro == true) {
                         mostrarMensagem(
                             context: context,
                             texto: "Número de contato já existente!");
@@ -363,8 +363,7 @@ class _CadastroState extends State<Cadastro> {
         // A senha e a confirmação de senha não são iguais
         mostrarMensagem(context: context, texto: "A senha está diferente!");
       }
-    } else if (_formKey.currentState!.validate() &&
-        arquivoSelecionado == null) {
+    } else {
       // O formulário não foi validado com sucesso, exibir uma mensagem de erro
       mostrarMensagem(
           context: context, texto: "Selecione uma imagem de perfil!");

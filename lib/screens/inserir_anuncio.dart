@@ -3,7 +3,7 @@ import 'package:doa_se_app/api/api_cep.dart';
 import 'package:doa_se_app/componentes/decoration_labeText.dart';
 import 'package:doa_se_app/main.dart';
 import 'package:doa_se_app/models/cep_model.dart';
-import 'package:doa_se_app/models/anuncio_model.dart';
+import 'package:doa_se_app/services/anuncio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';

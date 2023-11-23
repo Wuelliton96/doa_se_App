@@ -52,7 +52,7 @@ class UsuarioModel {
       if (user != null) {
         String idUser = user.uid;
         await db
-          .collection("cadastro_user")
+          .collection("usuarios")
           .doc(idUser)
           .set({
             "email": email,
@@ -93,16 +93,11 @@ class UsuarioModel {
     required String nomeCompleto,
   }) async {
     try {
-      User? user = _firebaseAuth.currentUser;
-      if (user != null) {
-        String idUser = user.uid;
-        QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('cadastro_user')
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('usuarios')
         .where('nome_completo', isEqualTo: nomeCompleto)
         .get();
-        return querySnapshot.docs.isNotEmpty;
-      }
-      return true;
+      return querySnapshot.docs.isNotEmpty;
     } catch (e) {
       print("Erro ao verificar usuário: $e");
       return false;
@@ -114,18 +109,11 @@ class UsuarioModel {
     required String nomeUsuario,
   }) async {
     try {
-      User? user = _firebaseAuth.currentUser;
-      if (user != null) {
-        String idUser = user.uid;
-        QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('cadastro_user')
-        .doc(idUser)
-        .collection("usuarios")
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('usuarios')
         .where('nome_usuario', isEqualTo: nomeUsuario)
         .get();
-        return querySnapshot.docs.isNotEmpty;
-      }
-      return true;
+      return querySnapshot.docs.isNotEmpty;
     } catch (e) {
       print("Erro ao verificar usuário: $e");
       return false;
@@ -135,21 +123,13 @@ class UsuarioModel {
   // método para verificar o Contato do usuário no Firestone
   Future<bool> verificarEmailFirestone({
     required String email, 
-
   }) async {
     try {
-      User? user = _firebaseAuth.currentUser;
-      if (user != null) {
-        String idUser = user.uid;
-        QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('cadastro_user')
-        .doc(idUser)
-        .collection("usuarios")
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('usuarios')
         .where('email', isEqualTo: email)
         .get();
-        return querySnapshot.docs.isNotEmpty;
-      }
-      return true;
+      return querySnapshot.docs.isNotEmpty;
     } catch (e) {
       print("Erro ao verificar usuário: $e");
       return false;
@@ -160,19 +140,12 @@ class UsuarioModel {
   Future<bool> verificarContatoFirestone({
     required String contato,
   }) async {
-    try {
-       User? user = _firebaseAuth.currentUser;
-      if (user != null) {
-        String idUser = user.uid;
-        QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('cadastro_user')
-        .doc(idUser)
+    try { 
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection("usuarios")
         .where('contato', isEqualTo: contato)
         .get();
         return querySnapshot.docs.isNotEmpty;
-      }
-      return true;
     } catch (e) {
       print("Erro ao verificar usuário: $e");
       return false;

@@ -22,7 +22,7 @@ class _UsuarioState extends State<Usuario> {
 
     if (user != null) {
       FirebaseFirestore.instance
-          .collection('cadastro_user')
+          .collection('usuarios')
           .doc(user.uid)
           .get()
           .then((DocumentSnapshot documentSnapshot) {
