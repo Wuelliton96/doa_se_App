@@ -55,7 +55,7 @@ class _UsuarioState extends State<Usuario> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              CustomCard('Usuario $userName', Color(0xFFD9D9D9), 0.9, 0.3, true),
+              CustomCard('$userName',  Color(0xFFD9D9D9), 0.9, 0.3, true),
               CustomCard('Meus anúncios', Colors.white, 0.9, 0.2),
               CustomCard('Meu perfil', Colors.white, 0.9, 0.2),
               CustomCard('Sair', Colors.white, 0.9, 0.1),
@@ -87,7 +87,7 @@ class CustomCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (text == 'Meus anúncios') {
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const AnunciosUsuario()), (Route<dynamic> router) => false);
+        Navigator.push(context,MaterialPageRoute(builder: (context) =>const AnunciosUsuario()));
         } else if (text == 'Meu perfil') {
           // Adicione a navegação para a página de perfil
         } else if (text == 'Sair') {
@@ -125,3 +125,5 @@ class CustomCard extends StatelessWidget {
     );
   }
 }
+
+

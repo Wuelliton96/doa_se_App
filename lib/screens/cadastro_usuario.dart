@@ -1,16 +1,16 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doa_se_app/componentes/decoration_labeText.dart';
-import 'package:doa_se_app/services/usuario_service.dart';
-import 'package:doa_se_app/screens/login_usuario.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:doa_se_app/componentes/mensagem.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../componentes/constants.dart';
+import '../componentes/decoration_labeText.dart';
+import '../componentes/mensagem.dart';
+import '../services/usuario_service.dart';
+import 'login_usuario.dart';
 
 class Cadastro extends StatefulWidget {
   const Cadastro({super.key});
@@ -427,14 +427,3 @@ class _CadastroState extends State<Cadastro> {
     });
   }
 }
-
-
-
-// acrescentar na condicional if o "&& arquivoSelecionado != null".
-
-/*substitua pelo código abaixo:
-} else if (_formKey.currentState!.validate() && arquivoSelecionado == null) {
-  // O formulário não foi validado com sucesso, exibir uma mensagem de erro
-  mostrarMensagem(context: context, texto: "Selecione uma imagem de perfil!");
-}
-*/

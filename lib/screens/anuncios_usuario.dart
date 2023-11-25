@@ -83,6 +83,7 @@ class _AnunciosUsuarioState extends State<AnunciosUsuario> {
         backgroundColor: Colors.red,
         title: const Text("Meus Anúncios"),
       ),
+      // ignore: avoid_unnecessary_containers
       body: Container(
         child: Column(
           children: [
@@ -101,7 +102,8 @@ class _AnunciosUsuarioState extends State<AnunciosUsuario> {
                       return Container(
                         padding: const EdgeInsets.all(100),
                         child: const Text(
-                          "Nenhum anúncio! 😢",
+                          "Nenhum anúncio encontrado.\n\nFaça uma doação!",
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -121,14 +123,7 @@ class _AnunciosUsuarioState extends State<AnunciosUsuario> {
                                   documentSnapshot);
                               return ItemAnuncio(
                                 anuncio: anuncio,
-                                onTapItem: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              DetalhesAnuncio(anuncio)));
-                                },
-                               //botao para remoção do anúncio do usuário
+                                //botao para remoção do anúncio do usuário
                                 onPressedRemover: () {
                                   showDialog(
                                     context: context,

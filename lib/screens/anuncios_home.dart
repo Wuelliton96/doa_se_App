@@ -24,7 +24,10 @@ class _AnunciosState extends State<Anuncios> {
   // Método para adicionar um ouvinte para atualizações nos anúncios
   _adicionarListenerAnuncios() async {
     FirebaseFirestore db = FirebaseFirestore.instance;
-    Stream<QuerySnapshot> stream = db.collection("anuncios").snapshots();
+    Stream<QuerySnapshot> stream = db
+        .collection("anuncios")
+        .orderBy("dataHora", descending: true)
+        .snapshots();
     stream.listen((dados) {
       _controller.add(dados);
     });
@@ -56,6 +59,9 @@ class _AnunciosState extends State<Anuncios> {
       body: Container(
         child: Column(
           children: [
+            const SizedBox(
+              height: 20,
+            ),
             StreamBuilder(
               stream: _controller.stream,
               builder: (context, snapshot) {

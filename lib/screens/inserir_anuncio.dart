@@ -16,7 +16,7 @@ import '../models/cep_model.dart';
 import '../services/anuncio_service.dart';
 import '../widgets/cust_button.dart';
 import '../widgets/cust_valid.dart';
-import 'AuthenticationWrapper.dart';
+import 'authenticationWrapper.dart';
 
 class InserirAnuncio extends StatefulWidget {
   const InserirAnuncio({super.key});

@@ -23,19 +23,20 @@ class AnuncioService {
         String idUser = user.uid;
         String idRandom = const Uuid().v1();
         await db
-          .collection("meus_anuncios")
-          .doc(idUser)
-          .collection("anuncios")
-          .doc(idRandom).set({
-            "titulo": titulo,
-            "descricao": descricao,
-            "categoria": categoria,
-            "cep": cep,
-            "estado": estado,
-            "cidade": cidade,
-            "bairro": bairro,
-            "telefone": telefone,
-            "dataHora": dataHoraAtual.toUtc(),
+            .collection("meus_anuncios")
+            .doc(idUser)
+            .collection("anuncios")
+            .doc(idRandom)
+            .set({
+          "titulo": titulo,
+          "descricao": descricao,
+          "categoria": categoria,
+          "cep": cep,
+          "estado": estado,
+          "cidade": cidade,
+          "bairro": bairro,
+          "telefone": telefone,
+          "dataHora": dataHoraAtual.toUtc(),
         });
       }
       return null;

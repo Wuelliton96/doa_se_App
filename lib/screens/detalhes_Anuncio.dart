@@ -3,7 +3,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../models/inserirAnuncio.dart';
 
-
 // ignore: must_be_immutable
 class DetalhesAnuncio extends StatefulWidget {
   DetalhesAnuncio(this.anuncio, {super.key});
@@ -35,8 +34,8 @@ class _DetalhesAnuncioState extends State<DetalhesAnuncio> {
     final uri = Uri(scheme: "tel", path: telefone);
     await launchUrl(uri);
   }
-  final PageController _pageController = PageController();
 
+  final PageController _pageController = PageController();
 
   @override
   void initState() {
@@ -100,16 +99,16 @@ class _DetalhesAnuncioState extends State<DetalhesAnuncio> {
                       ),
                     ),
                     Text(
-                        _anuncio.telefone,
-                        style: const TextStyle(
-                          fontSize: 18,
-                        ),
+                      _anuncio.telefone,
+                      style: const TextStyle(
+                        fontSize: 18,
                       ),
+                    ),
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 16),
                       child: Divider(),
                     ),
-                     const Text(
+                    const Text(
                       "Endereço",
                       style: TextStyle(
                         fontSize: 18,
@@ -138,7 +137,7 @@ class _DetalhesAnuncioState extends State<DetalhesAnuncio> {
                       style: const TextStyle(
                         fontSize: 18,
                       ),
-                    ),          
+                    ),
                   ],
                 ),
               ),
@@ -154,7 +153,7 @@ class _DetalhesAnuncioState extends State<DetalhesAnuncio> {
                 padding: const EdgeInsets.all(16),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color:Colors.red,
+                  color: Colors.red,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: const Text(

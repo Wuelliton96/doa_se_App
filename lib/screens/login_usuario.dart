@@ -5,7 +5,7 @@ import 'package:doa_se_app/services/autenticacao_servico.dart';
 import 'package:flutter/material.dart';
 import 'package:doa_se_app/componentes/mensagem.dart';
 
-import 'AuthenticationWrapper.dart';
+import 'authenticationWrapper.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);

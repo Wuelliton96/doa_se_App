@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/inserirAnuncio.dart';
 
+// ignore: must_be_immutable
 class ItemAnuncio extends StatelessWidget {
   ItemAnuncio(
       {super.key,
@@ -12,7 +13,7 @@ class ItemAnuncio extends StatelessWidget {
   Anuncio anuncio;
   VoidCallback? onTapItem;
   VoidCallback? onPressedRemover;
-  
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

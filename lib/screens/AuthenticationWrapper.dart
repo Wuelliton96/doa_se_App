@@ -2,11 +2,13 @@ import 'package:doa_se_app/screens/inserir_anuncio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'Anuncios.dart';
+import 'anuncios_home.dart';
 import 'login_usuario.dart';
 import 'perfil_usuario.dart';
 
 class AuthenticationWrapper extends StatelessWidget {
+  const AuthenticationWrapper({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -15,9 +17,9 @@ class AuthenticationWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshot.hasData) {
-          return HomePag();
+          return const HomePag();
         } else {
-          return Login();
+          return const Login();
         }
       },
     );
@@ -36,9 +38,9 @@ class _HomePagState extends State<HomePag> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    HomePage(),
-    AdPage(),
-    UserProfilePage(),
+    const HomePage(),
+    const AdPage(),
+    const UserProfilePage(),
   ];
 
   @override
@@ -52,9 +54,9 @@ class _HomePagState extends State<HomePag> {
             _currentIndex = index;
           });
         },
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
-        selectedItemColor: Color.fromARGB(255, 155, 0, 0),
-        unselectedItemColor: Color.fromARGB(255, 0, 0, 0),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        selectedItemColor: const Color.fromARGB(255, 155, 0, 0),
+        unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
