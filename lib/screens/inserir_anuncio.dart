@@ -1,16 +1,22 @@
 import 'dart:io';
-import 'package:doa_se_app/api/api_cep.dart';
+import 'package:brasil_fields/brasil_fields.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doa_se_app/componentes/decoration_labeText.dart';
-import 'package:doa_se_app/main.dart';
-import 'package:doa_se_app/models/cep_model.dart';
-import 'package:doa_se_app/services/anuncio_service.dart';
+import 'package:doa_se_app/models/inserirAnuncio.dart';
+import 'package:doa_se_app/utils/config.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:doa_se_app/componentes/mensagem.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
+import '../api/api_cep.dart';
+import '../models/cep_model.dart';
+import '../services/anuncio_service.dart';
+import '../widgets/cust_button.dart';
+import '../widgets/cust_valid.dart';
+import 'AuthenticationWrapper.dart';
 
 class InserirAnuncio extends StatefulWidget {
   const InserirAnuncio({super.key});
@@ -22,34 +28,38 @@ class InserirAnuncio extends StatefulWidget {
 class _InserirAnuncioState extends State<InserirAnuncio> {
   final _formKey = GlobalKey<FormState>();
   final AnuncioService anuncioService = AnuncioService();
+  late Anuncio _anuncio;
+  late BuildContext _dialogcontext;
+  List<DropdownMenuItem<String>>? _listaItensDropCategorias = [];
+  final List<File> _listaImagens = [];
+  String? _itemSelecionadoCategoria;
 
-  String? selectedCategoria;
+  //Regras de validação
+  final dropdownRequiredValidator =
+      CustomDropdownMenuRequiredValidator(errorText: "Campo obrigatório");
+  final requiredValidator = RequiredValidator(errorText: "Campo obrigatório");
+  final descricaoValidator = MultiValidator([
+    RequiredValidator(errorText: "Campo obrigatório"),
+    MaxLengthValidator(150, errorText: "Máximo de 150 caracteres"),
+  ]);
+
   String? selectedEstado;
   String? selectedCidade;
   String? selectedBairro;
-  AddressInfo? addressInfo; // Mantém as informações do endereço obtidas da busca por CEP
+  AddressInfo? addressInfo;
   String? cep; // Mantém o CEP inserido
-  final TextEditingController _telefoneController = TextEditingController();
-  final TextEditingController _cepController = TextEditingController();
-  final TextEditingController _tituloAnuncioController = TextEditingController();
-  final TextEditingController _descricaoController = TextEditingController();
-  
-  List<String> categorias = [
-    'Categoria 1',
-    'Categoria 2',
-    'Categoria 3',
-    'Categoria 4',
-  ];
 
+  bool isEstadoEnabled =
+      true; // Inicialmente, o campo de estado está habilitado
   // Método para buscar informações de endereço a partir do CEP usando a ViaCepApi
   Future<void> _fetchAddressFromCEP(String cep) async {
     final info = await ViaCepApi.getAddressInfo(cep);
     if (info != null) {
       setState(() {
-        addressInfo = info; 
-        selectedEstado = info.estado; 
-        selectedCidade = info.cidade; 
-        selectedBairro = info.bairro; 
+        addressInfo = info;
+        selectedEstado = info.estado;
+        selectedCidade = info.cidade;
+        selectedBairro = info.bairro;
       });
     } else {
       // Lide com o caso em que a solicitação à API falhe.
@@ -68,7 +78,7 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
             child: const Text('OK'),
             onPressed: () {
               Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => HomePage()),
+                  MaterialPageRoute(builder: (context) => AuthenticationWrapper()),
                   (Route<dynamic> router) => false);
             },
           )
@@ -77,43 +87,90 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
     );
   }
 
-  // Variável para armazenar a imagem selecionada pelo usuário
-  XFile? arquivoSelecionado;
+  _selecionarImagemGaleria() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? imagemSelecionada =
+        await picker.pickImage(source: ImageSource.gallery);
 
-  // Função que permite ao usuário selecionar uma imagem da galeria
-  Future<void> selecionarArquivo() async {
-    final imagem = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (imagem != null) {
+    if (imagemSelecionada != null) {
       setState(() {
-        arquivoSelecionado = imagem;
+        _listaImagens.add(File(imagemSelecionada.path));
       });
     }
   }
 
-  // método responsável por enviar imagem selecionada para o Storage do Firebase
-  Future<void> fazerUploadImagem() async {
-    if (arquivoSelecionado == null) {
-      print('Nenhum arquivo selecionado.');
-      return;
+  _carregarItensDropdown() {
+    _listaItensDropCategorias = Configuracoes.getCategorias();
+  }
+
+  Future _uploadImagens() async {
+    FirebaseStorage storage = FirebaseStorage.instance;
+    Reference pastaRaiz = storage.ref();
+
+    for (var imagem in _listaImagens) {
+      String nomeImagem = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference arquivo = pastaRaiz
+          .child("meus_anuncios")
+          .child(_anuncio.id)
+          .child(nomeImagem);
+
+      UploadTask uploadTask = arquivo.putFile(imagem);
+
+      await uploadTask.then((TaskSnapshot taskSnapshot) async {
+        String url = await taskSnapshot.ref.getDownloadURL();
+        _anuncio.fotos.add(url);
+      });
     }
+  }
 
-    final Reference storageRef = FirebaseStorage.instance
-        .ref()
-        .child('anuncio_images/img-${DateTime.now().toString()}.jpg');
+  _salvarAnuncio() async {
+    _abrirDialog(_dialogcontext);
+    await _uploadImagens();
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? usuarioLogado = auth.currentUser;
 
-    final UploadTask uploadTask =
-        storageRef.putFile(File(arquivoSelecionado!.path));
-
-    uploadTask.whenComplete(() {
-      print('Upload concluído com sucesso.');
-    }).catchError((error) {
-      print('Erro no upload: $error');
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    await db
+        .collection("meus_anuncios")
+        .doc(usuarioLogado?.uid)
+        .collection("anuncios")
+        .doc(_anuncio.id)
+        .set(_anuncio.toMap())
+        .then((_) async {
+      await db
+          .collection("anuncios")
+          .doc(_anuncio.id)
+          .set(_anuncio.toMap())
+          .then((_) {
+        _showSuccessMessage();
+      });
     });
+  }
+
+  _abrirDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 20),
+              Text("Salvando"),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
   void initState() {
     super.initState();
+    _carregarItensDropdown();
+    _anuncio = Anuncio.gerarId();
   }
 
   @override
@@ -125,94 +182,214 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
         elevation: 0,
       ),
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          Padding(
+      body: SingleChildScrollView(
+        child: Container(
+          child: Padding(
             padding: const EdgeInsets.all(32.0),
             child: Form(
               key: _formKey,
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
+              child: SingleChildScrollView(
+                child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 20,),
-                      TextFormField(
-                        keyboardType: TextInputType.text,
-                        controller: _tituloAnuncioController,
-                        decoration: getDecorationLabelText("", "Título Anúncio"),
-                        inputFormatters: [LengthLimitingTextInputFormatter(40)],
-                        validator: (String? value) {
-                          if (value == null) {    // Condicional que não pode ser apagado
-                            return "";
-                          }
-                          if (value.isEmpty) {    // Verifica se o campo está vazio
-                            return "*Campo obrigatório";
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        keyboardType: TextInputType.multiline,
-                        controller: _descricaoController,
-                        decoration: getDecorationLabelText("","Descrição"),
-                        maxLines: 5,
-                        maxLength: 250,
-                        validator: (String? value) {
-                          if (value == null) {    // Condicional que não pode ser apagado
-                            return ""; 
-                          }
-                          if (value.isEmpty) {
-                            return "*Campo obrigatório";
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      DropdownButtonFormField<String>(
-                        value: selectedCategoria,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedCategoria = newValue;
-                          });
-                        },
-                        items: categorias.map((String categoria) {
-                          return DropdownMenuItem<String>(
-                            value: categoria,
-                            child: Text(categoria),
+                      // área de imagens
+                      FormField<List>(
+                        builder: (state) {
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: 100,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: _listaImagens.length + 1,
+                                  itemBuilder: (context, indice) {
+                                    if (indice == _listaImagens.length) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            _selecionarImagemGaleria();
+                                          },
+                                          child: CircleAvatar(
+                                            backgroundColor:
+                                                Colors.grey.shade400,
+                                            radius: 50,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.add_a_photo,
+                                                  size: 40,
+                                                  color: Colors.grey.shade100,
+                                                ),
+                                                Text(
+                                                  "Adicionar",
+                                                  style: TextStyle(
+                                                    color: Colors.grey.shade100,
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    if (_listaImagens.isNotEmpty) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => Dialog(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Image.file(
+                                                        _listaImagens[indice]),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _listaImagens
+                                                              .removeAt(indice);
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        });
+                                                      },
+                                                      child: const Text(
+                                                        "Excluir",
+                                                        style: TextStyle(
+                                                            color: Colors.red),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: CircleAvatar(
+                                            radius: 50,
+                                            backgroundImage: FileImage(
+                                                _listaImagens[indice]),
+                                            child: Container(
+                                              color: const Color.fromRGBO(
+                                                255,
+                                                255,
+                                                255,
+                                                0.3,
+                                              ),
+                                              alignment: Alignment.center,
+                                              child: const Icon(
+                                                Icons.delete,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return Container();
+                                  },
+                                ),
+                              ),
+                              if (state.hasError)
+                                Text(
+                                  "[${state.errorText}]",
+                                  style: const TextStyle(color: Colors.red),
+                                )
+                            ],
                           );
-                        }).toList(),
-                        decoration: getDecorationLabelText("","Categoria"),
-                        validator: (String? value) {
-                          if (value == null) { 
-                            return "*Campo obrigatório";
+                        },
+                        initialValue: _listaImagens,
+                        validator: (imagens) {
+                          if (imagens != null && imagens.isEmpty) {
+                            return "É necessário selecionar uma imagem";
                           }
                           return null;
                         },
                       ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [MaskTextInputFormatter(
-                          mask: '(##) # ####-####',
-                          filter: {"#": RegExp(r'[0-9]')},
-                        ),],
-                        controller: _telefoneController,
-                        decoration: getDecorationLabelText("", "Telefone"),
-                        validator: (String? value) {
-                          if (value == null) {    // Condicional que não pode ser apagado
-                            return "";
-                          }
-                          if (value.isEmpty) {
-                            return "*Campo obrigatório";
-                          }
-                          if (value.length < 16) {
-                            return "Contato incorreto";
-                          }
-                          return null;
-                        },
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: TextFormField(
+                          decoration: getDecorationLabelText("", "Titulo"),
+                          validator: requiredValidator,
+                          onSaved: (titulo) {
+                            titulo != null ? _anuncio.titulo = titulo : null;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: TextFormField(
+                          decoration: getDecorationLabelText(
+                              "", "Descrição (até 150 caracteres)"),
+                          maxLines: null,
+                          validator: descricaoValidator,
+                          onSaved: (descricao) {
+                            descricao != null
+                                ? _anuncio.descricao = descricao
+                                : null;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: TextFormField(
+                          keyboardType: TextInputType.phone,
+                          decoration: getDecorationLabelText("", "Telefone"),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            TelefoneInputFormatter()
+                          ],
+                          validator: requiredValidator,
+                          onSaved: (telefone) {
+                            telefone != null
+                                ? _anuncio.telefone = telefone
+                                : null;
+                          },
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 4,
+                                top: 16,
+                                bottom: 16,
+                              ),
+                              child: DropdownButtonFormField(
+                                value: _itemSelecionadoCategoria,
+                                decoration:
+                                    getDecorationLabelText("", "Categoria"),
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                                items: _listaItensDropCategorias,
+                                onChanged: (valor) {
+                                  setState(() {
+                                    _itemSelecionadoCategoria = valor;
+                                  });
+                                },
+                                onSaved: (categoria) {
+                                  categoria != null
+                                      ? _anuncio.categoria = categoria
+                                      : null;
+                                },
+                                validator: dropdownRequiredValidator,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 20),
                       Row(
@@ -220,26 +397,22 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                           SizedBox(
                             width: 240,
                             child: TextFormField(
-                              keyboardType: const TextInputType.numberWithOptions(),
-                              controller: _cepController,
-                              decoration: getDecorationLabelText("","CEP"),
+                              keyboardType: TextInputType.phone,
+                              decoration: getDecorationLabelText("", "CEP"),
                               onChanged: (value) {
                                 setState(() {
                                   cep = value;
                                 });
                               },
-                              validator: (String? value) {
-                                if (value == null) {    // Condicional que não pode ser apagado
-                                  return "";
-                                }
-                                if (value.isEmpty) {
-                                  return "*Campo obrigatório";
-                                }
-                                return null;
-                              },
+                              validator: requiredValidator,
+                                onSaved: (cep) {
+                                  cep != null ? _anuncio.cep = cep : null;
+                                },
                             ),
                           ),
-                          const SizedBox(width: 10,),
+                          const SizedBox(
+                            width: 10,
+                          ),
                           ElevatedButton(
                             onPressed: () {
                               // Quando o botão "Buscar" é pressionado, chame a função para buscar informações
@@ -251,8 +424,8 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                       ),
                       const SizedBox(height: 20),
                       DropdownButtonFormField<String>(
-                        value: selectedEstado,    
-                        decoration: getDecorationLabelText("","Estado"),
+                        value: selectedEstado,
+                        decoration: getDecorationLabelText("", "Estado"),
                         onChanged: (String? newValue) {
                           setState(() {
                             selectedEstado = newValue;
@@ -264,17 +437,15 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                             child: Text(estado),
                           );
                         }).toList(),
-                        validator: (String? value) {
-                          if (value == null) {    // Condicional que não pode ser apagado
-                            return "*Campo obrigatório";
-                          }
-                          return null;
+                        validator: requiredValidator,
+                        onSaved: (estado) {
+                          estado != null ? _anuncio.estado = estado : null;
                         },
                       ),
                       const SizedBox(height: 20),
                       DropdownButtonFormField<String>(
-                        value: selectedCidade,    
-                        decoration: getDecorationLabelText("","Cidade"),
+                        value: selectedCidade,
+                        decoration: getDecorationLabelText("", "Cidade"),
                         onChanged: (String? newValue) {
                           setState(() {
                             selectedCidade = newValue;
@@ -286,17 +457,15 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                             child: Text(cidade),
                           );
                         }).toList(),
-                        validator: (String? value) {
-                          if (value == null) {    // Condicional que não pode ser apagado
-                            return "*Campo obrigatório";
-                          }
-                          return null;
+                        validator: requiredValidator,
+                        onSaved: (cidade) {
+                          cidade != null ? _anuncio.cidade = cidade : null;
                         },
                       ),
                       const SizedBox(height: 20),
                       DropdownButtonFormField<String>(
-                        value: selectedBairro,    
-                        decoration: getDecorationLabelText("","Bairro"),
+                        value: selectedBairro,
+                        decoration: getDecorationLabelText("", "Bairro"),
                         onChanged: (String? newValue) {
                           setState(() {
                             selectedBairro = newValue;
@@ -308,99 +477,35 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                             child: Text(bairro),
                           );
                         }).toList(),
-                        validator: (String? value) {
-                          if (value == null) {    // Condicional que não pode ser apagado
-                            return "*Campo obrigatório";
-                          }
-                          return null;
+                        validator: requiredValidator,
+                        onSaved: (bairro) {
+                          bairro != null ? _anuncio.bairro = bairro : null;
                         },
                       ),
-                      const SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                        child: InkWell(
-                          onTap: () {
-                            selecionarArquivo(); // Permite ao usuário selecionar uma imagem
-                          },
-                          child: Column(
-                            children: [
-                              const Text(
-                                "Inserir Foto",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Container(
-                                width: 150,
-                                height: 150,
-                                color: Colors.grey,
-                                child: arquivoSelecionado != null
-                                    ? Image.file(File(arquivoSelecionado!
-                                        .path)) // Exibe a imagem selecionada
-                                    : const Icon(Icons.camera_alt,
-                                        size: 50,
-                                        color: Colors
-                                            .white), // Exibe um ícone de câmera se nenhuma imagem for selecionada
-                              ),
-                            ],
-                          ),
-                        ),
+                      const SizedBox(
+                        height: 20,
                       ),
-                      const SizedBox(height: 32),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(200, 50),
-                          textStyle: const TextStyle(fontSize: 22),
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
-                        ),
-                        onPressed: () => botaoCriarAnuncioClicado(),
-                        child: const Text("Criar Anúncio"),
+                      BotaoCustomizado(
+                        texto: "Cadastrar anúncio",
+                        onPressed: () {
+                          if (_formKey.currentState != null &&
+                              _formKey.currentState!.validate()) {
+                            // salva os campos
+                            _formKey.currentState?.save();
+                            // configura dialog context
+                            _dialogcontext = context;
+                            // salva o anúncio
+                            _salvarAnuncio();
+                          }
+                        },
                       ),
-                      const SizedBox(height: 40),
-                    ],
-                  ),
-                ),
+                    ]
+                    ),
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
-
-  void botaoCriarAnuncioClicado() {
-    String tituloAnuncio = _tituloAnuncioController.text;
-    String descricaoAnuncio = _descricaoController.text;
-    String telefone = _telefoneController.text;
-    String cep = _cepController.text;
-    String? categoriaAnuncio = selectedCategoria; 
-    String? estadoSelecionado = selectedEstado;
-    String? cidadeSelecionado = selectedCidade;
-    String? bairroSelecionado = selectedBairro;
-
-    if (_formKey.currentState!.validate()) {
-      anuncioService.salvarDadosAnuncio(
-        titulo: tituloAnuncio, 
-        descricao: descricaoAnuncio, 
-        categoria: categoriaAnuncio, 
-        telefone: telefone, 
-        cep: cep, 
-        estado: estadoSelecionado, 
-        cidade: cidadeSelecionado, 
-        bairro: bairroSelecionado).then((String? erro) {
-          if (erro != null) {
-            mostrarMensagem(context: context, texto: "Erro ao criar o anúncio.");
-          } else {
-            fazerUploadImagem();
-            _showSuccessMessage();
-          }
-        });
-    }
-  }
 }
-
-
-
-

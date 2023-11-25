@@ -54,7 +54,7 @@ class _UsuarioState extends State<Usuario> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              CustomCard(userName, Color(0xFFD9D9D9), 0.9, 0.3, true),
+              CustomCard('Usuario $userName', Color(0xFFD9D9D9), 0.9, 0.3, true),
               CustomCard('Meus anúncios', Colors.white, 0.9, 0.2),
               CustomCard('Meu perfil', Colors.white, 0.9, 0.2),
               CustomCard('Sair', Colors.white, 0.9, 0.1),
