@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doa_se_app/screens/anuncios_usuario.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doa_se_app/screens/login_usuario.dart';
@@ -86,7 +87,7 @@ class CustomCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (text == 'Meus anúncios') {
-          // Adicione a navegação para a página de anúncios
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const AnunciosUsuario()), (Route<dynamic> router) => false);
         } else if (text == 'Meu perfil') {
           // Adicione a navegação para a página de perfil
         } else if (text == 'Sair') {
