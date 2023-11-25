@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 class Configuracoes {
   static List<DropdownMenuItem<String>>? getCategorias() {
     var categorias = <Map<String, String>>[
-      {'categoria': 'Imóvel', 'id': "imovel"},
-      {'categoria': 'Automóvel', 'id': "automovel"},
-      {'categoria': 'Moda', 'id': "moda"},
-      {'categoria': 'Eletrônico', 'id': "eletronico"},
-      {'categoria': 'Esportes', 'id': "esportes"}
+      {"categoria": "Roupas", "id": "roupas"},
+      {"categoria": "Alimentos", "id": "alimentos"},
+      {"categoria": "Artigos de Higiene", "id": "higiene"},
+      {"categoria": "Livros", "id": "livros"},
+      {"categoria": "Brinquedos", "id": "brinquedos"},
+      {"categoria": "Móveis", "id": "moveis"},
+      {"categoria": "Material Escolar", "id": "escolar"},
+      {"categoria": "Eletrônicos", "id": "eletronicos"}
     ];
 
     final List<DropdownMenuItem<String>> listaItensDropCategorias = [];
@@ -17,7 +20,6 @@ class Configuracoes {
         value: null,
         child: Text(
           "Categoria",
-          style: TextStyle(color: Colors.red, fontSize: 18),
         ),
       ),
     );

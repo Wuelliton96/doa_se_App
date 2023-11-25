@@ -33,7 +33,7 @@ class _AnunciosState extends State<Anuncios> {
   @override
   void initState() {
     super.initState();
-    _adicionarListenerAnuncios();    
+    _adicionarListenerAnuncios();
   }
 
   @override
@@ -81,26 +81,25 @@ class _AnunciosState extends State<Anuncios> {
                     } else {
                       return Expanded(
                         child: ListView.builder(
-                          itemCount: querySnapshot.docs.length,
-                          itemBuilder: (_, indice) {
-                            List<DocumentSnapshot> anuncios =
-                                querySnapshot.docs.toList();
-                            DocumentSnapshot documentSnapshot =
-                                anuncios[indice];
-                            Anuncio anuncio =
-                                Anuncio.fromDocumentSnapshot(documentSnapshot);
-                           return ItemAnuncio(
-                              anuncio: anuncio,
-                              onTapItem: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  DetalhesAnuncio(anuncio) as String,
-                                  arguments: anuncio,
-                                );
-                              },
-                            );
-                          }
-                        ),
+                            itemCount: querySnapshot.docs.length,
+                            itemBuilder: (_, indice) {
+                              List<DocumentSnapshot> anuncios =
+                                  querySnapshot.docs.toList();
+                              DocumentSnapshot documentSnapshot =
+                                  anuncios[indice];
+                              Anuncio anuncio = Anuncio.fromDocumentSnapshot(
+                                  documentSnapshot);
+                              return ItemAnuncio(
+                                anuncio: anuncio,
+                                onTapItem: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetalhesAnuncio(anuncio)));
+                                },
+                              );
+                            }),
                       );
                     }
                 }
