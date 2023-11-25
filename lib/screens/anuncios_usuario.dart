@@ -23,7 +23,7 @@ class _AnunciosUsuarioState extends State<AnunciosUsuario> {
   // Controlador de Stream para os dados do Firestore
   final _controller = StreamController<QuerySnapshot>.broadcast();
 
-  //Método para verificar o usuário logado e 
+  //Método para verificar o usuário logado e
   //salva a id do usuário em: _idUsuarioLogado
   _usuarioLogado() {
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -36,12 +36,26 @@ class _AnunciosUsuarioState extends State<AnunciosUsuario> {
     _usuarioLogado();
     FirebaseFirestore db = FirebaseFirestore.instance;
     Stream<QuerySnapshot> stream = db
-    .collection("meus_anuncios")
-    .doc(_idUsuarioLogado)
-    .collection("anuncios")
-    .snapshots();
+        .collection("meus_anuncios")
+        .doc(_idUsuarioLogado)
+        .collection("anuncios")
+        .snapshots();
     stream.listen((dados) {
       _controller.add(dados);
+    });
+  }
+
+  // Método para deletar anúncios do usuário logado
+  _removerAnuncio(String idAnuncio) async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    await db
+        .collection("meus_anuncios")
+        .doc(_idUsuarioLogado)
+        .collection("anuncios")
+        .doc(idAnuncio)
+        .delete()
+        .then((_) async {
+      await db.collection("anuncios").doc(idAnuncio).delete();
     });
   }
 
@@ -113,6 +127,46 @@ class _AnunciosUsuarioState extends State<AnunciosUsuario> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               DetalhesAnuncio(anuncio)));
+                                },
+                               //botao para remoção do anúncio do usuário
+                                onPressedRemover: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text("Confirmar exclusão"),
+                                        content: const Text(
+                                            "Deseja realmente excluir o anúncio?"),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text(
+                                              "Não",
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red,
+                                            ),
+                                            onPressed: () async {
+                                              await _removerAnuncio(anuncio.id);
+                                              Future.microtask(() =>
+                                                  Navigator.of(context).pop());
+                                            },
+                                            child: const Text(
+                                              "Excluir",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
                                 },
                               );
                             }),
