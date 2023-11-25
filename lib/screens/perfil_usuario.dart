@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doa_se_app/screens/anuncios_usuario.dart';
+import 'package:doa_se_app/screens/dados_usuario.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doa_se_app/screens/login_usuario.dart';
@@ -55,7 +56,7 @@ class _UsuarioState extends State<Usuario> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              CustomCard('$userName',  Color(0xFFD9D9D9), 0.9, 0.3, true),
+              CustomCard('$userName', Color(0xFFD9D9D9), 0.9, 0.3, true),
               CustomCard('Meus anúncios', Colors.white, 0.9, 0.2),
               CustomCard('Meu perfil', Colors.white, 0.9, 0.2),
               CustomCard('Sair', Colors.white, 0.9, 0.1),
@@ -87,9 +88,11 @@ class CustomCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (text == 'Meus anúncios') {
-        Navigator.push(context,MaterialPageRoute(builder: (context) =>const AnunciosUsuario()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const AnunciosUsuario()));
         } else if (text == 'Meu perfil') {
-          // Adicione a navegação para a página de perfil
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const DadosUsuario()));
         } else if (text == 'Sair') {
           // Faz o logout usando o Firebase Auth
           FirebaseAuth.instance.signOut().then((_) {
@@ -125,5 +128,3 @@ class CustomCard extends StatelessWidget {
     );
   }
 }
-
-
