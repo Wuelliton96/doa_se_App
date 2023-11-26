@@ -63,6 +63,7 @@ class ItemAnuncio extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 18,
                         ),
+                        maxLines: 2,
                       ),
                     ],
                   ),
