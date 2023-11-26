@@ -138,6 +138,8 @@ class _DetalhesAnuncioState extends State<DetalhesAnuncio> {
                         fontSize: 18,
                       ),
                     ),
+                    const SizedBox(
+                        height: 70), // Espaço para acomodar o botão "Ligar"
                   ],
                 ),
               ),
