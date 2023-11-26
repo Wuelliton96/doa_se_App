@@ -6,11 +6,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-import '../componentes/constants.dart';
-import '../componentes/decoration_labeText.dart';
-import '../componentes/mensagem.dart';
-import '../services/usuario_service.dart';
-import 'login_usuario.dart';
+import '../../componentes/constants.dart';
+import '../../componentes/decoration_labeText.dart';
+import '../../componentes/mensagem.dart';
+import '../../services/usuario_service.dart';
+import '../login_usuario.dart';
 
 class Cadastro extends StatefulWidget {
   const Cadastro({super.key});
@@ -54,8 +54,6 @@ class _CadastroState extends State<Cadastro> {
           _nomeUsuarioController.text = userData['nomeUsuario'];
           _emailController.text = userData['email'];
           _contatoController.text = userData['contato'];
-          _senhaController.text = userData['senha'];
-          _confirmarSenhaController.text = userData['senha'];
         }
       }
     } catch (e) {
@@ -232,7 +230,7 @@ class _CadastroState extends State<Cadastro> {
                         child: Column(
                           children: [
                             const Text(
-                              "Inserir Documento",
+                              "Inserir foto do documento",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

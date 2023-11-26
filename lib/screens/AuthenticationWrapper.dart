@@ -1,4 +1,4 @@
-import 'package:doa_se_app/screens/inserir_anuncio.dart';
+import 'package:doa_se_app/screens/cadastro/cadastro_anuncio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

@@ -58,8 +58,7 @@ class UsuarioModel {
             "contato": contato,
             "nome_completo": nomeCompleto,
             "nome_usuario": nomeUsuario,
-            "senha": senha,
-            "dataHora": dataHoraAtual.toUtc(),
+            "dataHora_criação": dataHoraAtual.toUtc(),
         });
       }
       return null;

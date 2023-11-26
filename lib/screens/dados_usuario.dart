@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doa_se_app/componentes/decoration_labeText.dart';
 import 'package:flutter/material.dart';
-//import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class DadosUsuario extends StatefulWidget {
   const DadosUsuario({Key? key}) : super(key: key);
@@ -10,55 +12,81 @@ class DadosUsuario extends StatefulWidget {
 }
 
 class _DadosUsuarioState extends State<DadosUsuario> {
-  TextEditingController _nomeController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _nomeUsuarioController = TextEditingController();
+  // ignore: deprecated_member_use
+  late final DatabaseReference _database =
+      FirebaseDatabase.instance.reference();
+  final _nomeController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _nomeUsuarioController = TextEditingController();
 
-  String? _nome;
+  String? _nomeUsuario;
   String? _email;
+  String? _nome;
+  bool _salvandoDados = false;
 
   @override
   void initState() {
     super.initState();
-    //_buscarDadosUsuario();
+    _buscarDadosUsuarioLogado();
   }
 
-  /*Future<void> _buscarDadosUsuario() async {
-    try {
-      DataSnapshot snapshot =
-          await _database.child('usuarios').child('id_do_usuario').once();
-      Map<dynamic, dynamic> values = snapshot.value;
+  Future<void> _buscarDadosUsuarioLogado() async {
+    User? user = FirebaseAuth.instance.currentUser;
 
-      setState(() {
-        _nome = values['nome'];
-        _email = values['email'];
-        _nomeController.text = _nome ?? '';
-        _emailController.text = _email ?? '';
+    if (user != null) {
+      FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(user.uid)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          setState(() {
+            _nomeUsuario = documentSnapshot['nome_usuario'] ??
+                'Nome do usuario não disponível';
+            _email = documentSnapshot['email'] ?? 'Email não disponivel';
+            _nome = documentSnapshot['nome_completo'] ?? 'Nome não disponivel';
+          });
+        }
+      }).catchError((error) {
+        print('Error fetching user data: $error');
       });
-    } catch (e) {
-      print('Erro ao buscar dados do Firebase: $e');
+    } else {
+      setState(() {
+        _nomeUsuario = 'Usuário não logado';
+      });
     }
   }
 
   Future<void> _salvarDadosUsuario() async {
     try {
-      await _database.child('usuarios').child('id_do_usuario').update({
-        'nome': _nomeController.text,
-        'email': _emailController.text,
-      });
-
       setState(() {
-        _nome = _nomeController.text;
-        _email = _emailController.text;
+        _salvandoDados = true;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Informações atualizadas com sucesso')),
-      );
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        FirebaseFirestore.instance.collection('usuarios').doc(user.uid).update({
+          'nome_usuario': _nomeUsuarioController.text,
+          'email': _emailController.text,
+          'nome_completo': _nomeController.text,
+          'ultima_atualizacao': DateTime.now().toString(),
+        });
+
+        print(
+            'Informações atualizadas com sucesso em ${DateTime.now()} para o usuario $user');
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Informações atualizadas com sucesso')),
+        );
+      }
     } catch (e) {
       print('Erro ao salvar dados no Firebase: $e');
+    } finally {
+      setState(() {
+        _salvandoDados = false;
+      });
     }
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,33 +100,42 @@ class _DadosUsuarioState extends State<DadosUsuario> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.asset("assets/doa-se.png", height: 200, width: 200),
+            Image.asset("assets/doa-se.png", height: 300, width: 300),
             const SizedBox(
-              height: 100,
+              height: 10,
             ),
             TextFormField(
               controller: _nomeController,
-              decoration: getDecorationLabelText('', 'Nome'),
+              decoration: getDecorationLabelText('$_nome', 'Nome'),
             ),
             const SizedBox(height: 15),
             TextFormField(
               controller: _emailController,
-              decoration: getDecorationLabelText('', 'Email'),
+              decoration: getDecorationLabelText('$_email', 'E-mail'),
             ),
             const SizedBox(height: 15),
             TextFormField(
               controller: _nomeUsuarioController,
-              decoration: getDecorationLabelText('', 'Nome usuario'),
+              decoration: getDecorationLabelText('$_nomeUsuario', 'Usuario'),
             ),
-            const SizedBox(height: 20),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                ElevatedButton(
-                  onPressed: null,
-                  child: Text('Salvar'),
+            const SizedBox(height: 40),
+            Visibility(
+              visible: _salvandoDados,
+              child: CircularProgressIndicator(),
+              replacement: ElevatedButton(
+                onPressed: _salvarDadosUsuario,
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    minimumSize:
+                        Size(300, 50) // Define a cor vermelha para o botão
+                    ),
+                child: const Text(
+                  'Atualizar',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
                 ),
-              ],
+              ),
             ),
           ],
         ),

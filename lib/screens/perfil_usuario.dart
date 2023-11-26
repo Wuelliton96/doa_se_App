@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doa_se_app/screens/anuncios_usuario.dart';
 import 'package:doa_se_app/screens/dados_usuario.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doa_se_app/screens/login_usuario.dart';
 
 class Usuario extends StatefulWidget {
@@ -16,9 +16,16 @@ class _UsuarioState extends State<Usuario> {
   @override
   void initState() {
     super.initState();
-    _loadUserName();
+    _loadUserName(); // Carrega o nome do usuário ao iniciar a tela
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadUserName(); // Atualiza o nome do usuário quando houver mudança nas dependências
+  }
+
+  // Carrega o nome do usuário a partir do Firestore
   Future<void> _loadUserName() async {
     User? user = FirebaseAuth.instance.currentUser;
 

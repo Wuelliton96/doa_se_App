@@ -28,6 +28,7 @@ class _RedefinirSenhaState extends State<RedefinirSenha> {
       print('E-mail de redefinição de senha enviado para $email');
 
       // Exibe uma mensagem para o usuário
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -38,6 +39,7 @@ class _RedefinirSenhaState extends State<RedefinirSenha> {
       );
 
       // Redireciona para a tela de login após enviar o e-mail de redefinição
+      // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

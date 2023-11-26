@@ -1,4 +1,4 @@
-import 'package:doa_se_app/screens/cadastro_usuario.dart';
+import 'package:doa_se_app/screens/cadastro/cadastro_usuario.dart';
 import 'package:doa_se_app/componentes/decoration_labeText.dart';
 import 'package:doa_se_app/screens/redefinir_senha.dart';
 import 'package:doa_se_app/services/autenticacao_servico.dart';
