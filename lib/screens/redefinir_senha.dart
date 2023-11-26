@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:doa_se_app/componentes/decoration_labeText.dart';
-import 'package:doa_se_app/services/autenticacao_servico.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:doa_se_app/screens/login_usuario.dart';
 
 class RedefinirSenha extends StatefulWidget {
   const RedefinirSenha({Key? key}) : super(key: key);
@@ -12,16 +11,43 @@ class RedefinirSenha extends StatefulWidget {
 
 class _RedefinirSenhaState extends State<RedefinirSenha> {
   final _formKey = GlobalKey<FormState>();
-  final AutenticacaoServico _autenticacaoServico = AutenticacaoServico();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  final TextEditingController _senhaController = TextEditingController();
-  final TextEditingController _confirmarSenhaController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
   @override
   void dispose() {
-    _senhaController.dispose();
-    _confirmarSenhaController.dispose();
+    _emailController.dispose();
     super.dispose();
+  }
+
+  Future<void> _resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      // Envio de e-mail bem-sucedido
+      print('E-mail de redefinição de senha enviado para $email');
+
+      // Exibe uma mensagem para o usuário
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'E-mail de redefinição de senha enviado para $email',
+          ),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+
+      // Redireciona para a tela de login após enviar o e-mail de redefinição
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const Login(),
+        ),
+      );
+    } catch (e) {
+      // Lidar com erros de envio de e-mail
+      print('Erro ao enviar e-mail de redefinição: $e');
+    }
   }
 
   @override
@@ -33,106 +59,71 @@ class _RedefinirSenhaState extends State<RedefinirSenha> {
         elevation: 0,
       ),
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(32.0),
-            child: Form(
-              key: _formKey,
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset("assets/doa-se.png", height: 200, width: 200),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      SizedBox(
-                        height: 35,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                            textStyle: const TextStyle(
-                              fontSize: 15, 
-                            ),
-                            foregroundColor: Colors.black,
-                          ),
-                          onPressed: null,
-                          child: const Text("Cadastre sua nova senha"),
-                        ),
-                      ),
-                      const SizedBox(height: 20,),
-                      TextFormField(
-                        controller: _senhaController,
-                        keyboardType: TextInputType.text,
-                        decoration: getDecorationLabelText("", "Senha"),
-                        obscureText: true,
-                        validator: (String? value) {
-                          if (value == null) {
-                            // Condicional que não pode ser apagado
-                            return "";
-                          }
-                          if (value.isEmpty) {
-                            return "Digite sua senha!";
-                          }
-                          if (value.length < 5) {
-                            return "A senha é muito curta";
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _senhaController,
-                        keyboardType: TextInputType.text,
-                        decoration: getDecorationLabelText("", "Confirmar senha"),
-                        obscureText: true,
-                        validator: (String? value) {
-                          if (value == null) {
-                            // Condicional que não pode ser apagado
-                            return "";
-                          }
-                          if (value.isEmpty) {
-                            return "Digite sua senha!";
-                          }
-                          if (value.length < 5) {
-                            return "A senha é muito curta";
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 32),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(200, 50),
-                          textStyle: const TextStyle(fontSize: 22),
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
-                        ),
-                        onPressed: () => botaoConfirmarClicado(),
-                        child: const Text("Confirmar"),
-                      ),
-                      const SizedBox(height: 40),
-                    ],
+      body: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Form(
+          key: _formKey,
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset("assets/doa-se.png", height: 200, width: 200),
+                  const SizedBox(
+                    height: 20,
                   ),
-                ),
+                  const Text(
+                    'Redefinição de Senha',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Digite o seu e-mail no campo abaixo e lhe enviaremos um e-mail para fazer a redefinição de senha.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 30),
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      labelText: 'E-mail',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Digite seu e-mail!';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 32),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(200, 50),
+                      textStyle: const TextStyle(fontSize: 22),
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        // Se o formulário for válido, chama a função para redefinir a senha
+                        _resetPassword(_emailController.text.trim());
+                      }
+                    },
+                    child: const Text("Enviar e-mail"),
+                  ),
+                  const SizedBox(height: 40),
+                ],
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
-  }
-
-  botaoConfirmarClicado() {
-    String senha = _senhaController.text;
-    String confirmarSenha = _confirmarSenhaController.text;
-
-    if (_formKey.currentState!.validate()) {
-      if (senha == confirmarSenha) {
-
-      }
-    }
   }
 }

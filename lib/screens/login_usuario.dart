@@ -97,11 +97,10 @@ class _LoginState extends State<Login> {
                       const SizedBox(height: 20),
                       TextButton(
                         style: TextButton.styleFrom(
-                          textStyle: const TextStyle(
-                            fontSize: 15,
-                          ),
-                          foregroundColor: Colors.black
-                        ),
+                            textStyle: const TextStyle(
+                              fontSize: 15,
+                            ),
+                            foregroundColor: Colors.black),
                         onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -110,11 +109,10 @@ class _LoginState extends State<Login> {
                       ),
                       TextButton(
                         style: TextButton.styleFrom(
-                          textStyle: const TextStyle(
-                            fontSize: 15,
-                          ),
-                          foregroundColor: Colors.black
-                        ),
+                            textStyle: const TextStyle(
+                              fontSize: 15,
+                            ),
+                            foregroundColor: Colors.black),
                         onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
