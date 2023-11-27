@@ -7,7 +7,7 @@ class BoxCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child:boxContent,
+      child: boxContent,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         boxShadow: kElevationToShadow[3],

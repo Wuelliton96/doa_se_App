@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 
 class ViaCepApi {
   static Future<AddressInfo?> getAddressInfo(String cep) async {
-    final response = await http.get(Uri.parse('https://viacep.com.br/ws/$cep/json/'));
+    final response =
+        await http.get(Uri.parse('https://viacep.com.br/ws/$cep/json/'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -14,6 +15,3 @@ class ViaCepApi {
     }
   }
 }
-
-
-

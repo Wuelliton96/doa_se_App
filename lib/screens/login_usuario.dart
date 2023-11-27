@@ -1,3 +1,4 @@
+import 'package:doa_se_app/componentes/constants.dart';
 import 'package:doa_se_app/screens/cadastro/cadastro_usuario.dart';
 import 'package:doa_se_app/componentes/decoration_labeText.dart';
 import 'package:doa_se_app/screens/redefinir_senha.dart';
@@ -17,9 +18,12 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   final AutenticacaoServico _autenticacaoServico = AutenticacaoServico();
-
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
+  bool _showPassword = false; // Variável para controlar a visibilidade da senha
+
+  // Estado para controlar a exibição do indicador de carregamento
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -56,7 +60,7 @@ class _LoginState extends State<Login> {
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.text,
-                        decoration: getDecorationLabelText("", "E-mail"),
+                        decoration: const InputDecoration(labelText: "E-mail"),
                         validator: (String? value) {
                           if (value == null) {
                             // Condicional que não pode ser apagado
@@ -78,18 +82,31 @@ class _LoginState extends State<Login> {
                       TextFormField(
                         controller: _senhaController,
                         keyboardType: TextInputType.emailAddress,
-                        decoration: getDecorationLabelText("", "Senha"),
-                        obscureText: true,
+                        decoration: InputDecoration(
+                          labelText: 'Senha',
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _showPassword = !_showPassword;
+                              });
+                            },
+                            icon: Icon(
+                              _showPassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                          ),
+                        ),
+                        obscureText: !_showPassword,
                         validator: (String? value) {
                           if (value == null) {
-                            // Condicional que não pode ser apagado
-                            return "";
+                            return '';
                           }
                           if (value.isEmpty) {
-                            return "Digite sua senha!";
+                            return 'Digite sua senha!';
                           }
                           if (value.length < 5) {
-                            return "A senha é muito curta";
+                            return 'A senha é muito curta';
                           }
                           return null;
                         },
@@ -119,38 +136,6 @@ class _LoginState extends State<Login> {
                                 builder: (context) => const Cadastro())),
                         child: const Text("Cadastrar-se?"),
                       ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: 240,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(150, 50),
-                            backgroundColor: Color.fromARGB(255, 219, 219, 219),
-                            foregroundColor: Colors.black,
-                            textStyle: const TextStyle(fontSize: 17),
-                          ),
-                          onPressed: () {
-                            /*
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Cadastro(),
-                              ),
-                            );
-                            */
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/google.png",
-                                height: 25,
-                              ),
-                              const Text(" Entrar com Google"),
-                            ],
-                          ),
-                        ),
-                      ),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -159,8 +144,21 @@ class _LoginState extends State<Login> {
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
                         ),
-                        onPressed: () => botaoEntrarClicado(),
-                        child: const Text("Entrar"),
+                        onPressed: () {
+                          // Se estiver carregando, não faz nada
+                          if (_isLoading) return;
+
+                          // Chama a função do botão apenas se não estiver carregando
+                          botaoEntrarClicado();
+                        },
+                        child: _isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              )
+                            : const Text("Entrar"),
                       ),
                       const SizedBox(height: 40),
                     ],
@@ -182,6 +180,10 @@ class _LoginState extends State<Login> {
 
   // Método chamado quando o botão "Entrar" é clicado
   botaoEntrarClicado() {
+    // Ativa o indicador de carregamento
+    setState(() {
+      _isLoading = true;
+    });
     // Obtém o email e senha do usuário dos controladores de texto
     String email = _emailController.text;
     String senha = _senhaController.text;
@@ -201,13 +203,17 @@ class _LoginState extends State<Login> {
           // Se o login for bem-sucedido, limpa o formulário
           apagarInformacaoFormulario();
           // Navega para a tela "AnuncioHome"
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => const HomePag(),
             ),
           );
         }
+        // Desativa o indicador de carregamento após o processo de login
+        setState(() {
+          _isLoading = false;
+        });
       });
     }
   }

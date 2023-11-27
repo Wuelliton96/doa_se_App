@@ -17,10 +17,8 @@ class UsuarioModel {
   }
 
   // Método para cadastrar um novo usuário com email e senha
-  Future<String?> cadastrarUsuario({
-    required String email,
-    required String senha
-  }) async {
+  Future<String?> cadastrarUsuario(
+      {required String email, required String senha}) async {
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
@@ -38,27 +36,23 @@ class UsuarioModel {
   }
 
   // Método para salvar os dados do usuário no Cloud Firestore
-  Future<String?> salvarDados({
-    required String email,
-    required String contato,
-    required String nomeCompleto,
-    required String nomeUsuario,
-    required String senha
-  }) async {
+  Future<String?> salvarDados(
+      {required String email,
+      required String contato,
+      required String nomeCompleto,
+      required String nomeUsuario,
+      required String senha}) async {
     try {
       User? user = _firebaseAuth.currentUser;
       DateTime dataHoraAtual = DateTime.now();
       if (user != null) {
         String idUser = user.uid;
-        await db
-          .collection("usuarios")
-          .doc(idUser)
-          .set({
-            "email": email,
-            "contato": contato,
-            "nome_completo": nomeCompleto,
-            "nome_usuario": nomeUsuario,
-            "dataHora_criação": dataHoraAtual.toUtc(),
+        await db.collection("usuarios").doc(idUser).set({
+          "email": email,
+          "contato": contato,
+          "nome_completo": nomeCompleto,
+          "nome_usuario": nomeUsuario,
+          "dataHora_criação": dataHoraAtual.toUtc(),
         });
       }
       return null;
@@ -73,28 +67,30 @@ class UsuarioModel {
       await FirebaseAuth.instance.sendSignInLinkToEmail(
         email: email,
         actionCodeSettings: ActionCodeSettings(
-          url: 'https://doase-f8cd1.firebaseapp.com/__/auth/action?mode=action&oobCode=code',
+          url:
+              'https://doase-f8cd1.firebaseapp.com/__/auth/action?mode=action&oobCode=code',
           androidPackageName: 'dev.x_devs.doa_se.doa_se_app',
           handleCodeInApp: true,
           androidInstallApp: true,
           androidMinimumVersion: '16',
         ),
       );
-      print('Link de verificação enviado com sucesso para $email. Verifique seu email para concluir o registro.');
+      print(
+          'Link de verificação enviado com sucesso para $email. Verifique seu email para concluir o registro.');
     } catch (e) {
       print('Erro ao enviar o link de verificação: $e');
     }
   }
-  
+
   // método para verificar o Nome Completo no Firestone
   Future<bool> verificarNomeCompletoFirestone({
     required String nomeCompleto,
   }) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('usuarios')
-        .where('nome_completo', isEqualTo: nomeCompleto)
-        .get();
+          .collection('usuarios')
+          .where('nome_completo', isEqualTo: nomeCompleto)
+          .get();
       return querySnapshot.docs.isNotEmpty;
     } catch (e) {
       print("Erro ao verificar usuário: $e");
@@ -108,25 +104,25 @@ class UsuarioModel {
   }) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('usuarios')
-        .where('nome_usuario', isEqualTo: nomeUsuario)
-        .get();
+          .collection('usuarios')
+          .where('nome_usuario', isEqualTo: nomeUsuario)
+          .get();
       return querySnapshot.docs.isNotEmpty;
     } catch (e) {
       print("Erro ao verificar usuário: $e");
       return false;
     }
   }
-  
+
   // método para verificar o Contato do usuário no Firestone
   Future<bool> verificarEmailFirestone({
-    required String email, 
+    required String email,
   }) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('usuarios')
-        .where('email', isEqualTo: email)
-        .get();
+          .collection('usuarios')
+          .where('email', isEqualTo: email)
+          .get();
       return querySnapshot.docs.isNotEmpty;
     } catch (e) {
       print("Erro ao verificar usuário: $e");
@@ -138,16 +134,15 @@ class UsuarioModel {
   Future<bool> verificarContatoFirestone({
     required String contato,
   }) async {
-    try { 
+    try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection("usuarios")
-        .where('contato', isEqualTo: contato)
-        .get();
-        return querySnapshot.docs.isNotEmpty;
+          .collection("usuarios")
+          .where('contato', isEqualTo: contato)
+          .get();
+      return querySnapshot.docs.isNotEmpty;
     } catch (e) {
       print("Erro ao verificar usuário: $e");
       return false;
     }
-  } 
-
+  }
 }

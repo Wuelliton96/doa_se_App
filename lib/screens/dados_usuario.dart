@@ -94,6 +94,7 @@ class _DadosUsuarioState extends State<DadosUsuario> {
       appBar: AppBar(
         backgroundColor: Colors.red,
         title: const Text('Meu perfil'),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -111,6 +112,7 @@ class _DadosUsuarioState extends State<DadosUsuario> {
             const SizedBox(height: 15),
             TextFormField(
               controller: _emailController,
+              keyboardType: TextInputType.text,
               decoration: getDecorationLabelText('$_email', 'E-mail'),
             ),
             const SizedBox(height: 15),

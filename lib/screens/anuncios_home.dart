@@ -55,6 +55,7 @@ class _AnunciosState extends State<Anuncios> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Doa-se"),
+        centerTitle: true,
       ),
       body: Container(
         child: Column(

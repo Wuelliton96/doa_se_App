@@ -15,6 +15,8 @@ class _RedefinirSenhaState extends State<RedefinirSenha> {
 
   final TextEditingController _emailController = TextEditingController();
 
+  bool _isLoading = false;
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -22,6 +24,9 @@ class _RedefinirSenhaState extends State<RedefinirSenha> {
   }
 
   Future<void> _resetPassword(String email) async {
+    setState(() {
+      _isLoading = true; // Ativa o indicador de carregamento
+    });
     try {
       await _auth.sendPasswordResetEmail(email: email);
       // Envio de e-mail bem-sucedido
@@ -103,7 +108,9 @@ class _RedefinirSenhaState extends State<RedefinirSenha> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(
+                    height: 50,
+                  ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(200, 50),
@@ -111,13 +118,17 @@ class _RedefinirSenhaState extends State<RedefinirSenha> {
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
                     ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        // Se o formulário for válido, chama a função para redefinir a senha
-                        _resetPassword(_emailController.text.trim());
-                      }
-                    },
-                    child: const Text("Enviar e-mail"),
+                    onPressed: _isLoading
+                        ? null // Impede cliques durante o carregamento
+                        : () {
+                            if (_formKey.currentState!.validate()) {
+                              // Se o formulário for válido, chama a função para redefinir a senha
+                              _resetPassword(_emailController.text.trim());
+                            }
+                          },
+                    child: _isLoading
+                        ? const CircularProgressIndicator() // Indicador de carregamento
+                        : const Text("Enviar e-mail"), // Texto normal do botão
                   ),
                   const SizedBox(height: 40),
                 ],

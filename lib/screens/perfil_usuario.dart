@@ -58,12 +58,13 @@ class _UsuarioState extends State<Usuario> {
         appBar: AppBar(
           backgroundColor: Colors.red,
           title: const Text('Perfil'),
+          centerTitle: true,
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              CustomCard('$userName', Color(0xFFD9D9D9), 0.9, 0.3, true),
+              CustomCard('$userName', const Color(0xFFD9D9D9), 0.9, 0.3, true),
               CustomCard('Meus anúncios', Colors.white, 0.9, 0.2),
               CustomCard('Meu perfil', Colors.white, 0.9, 0.2),
               CustomCard('Sair', Colors.white, 0.9, 0.1),
@@ -106,7 +107,7 @@ class CustomCard extends StatelessWidget {
             // Navega de volta para a página de login e remove a pilha de navegação existente
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => Login()),
+              MaterialPageRoute(builder: (context) => const Login()),
               (Route<dynamic> route) => false,
             );
           }).catchError((error) {

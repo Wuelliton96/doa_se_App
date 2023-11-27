@@ -1,7 +1,8 @@
 import 'package:form_field_validator/form_field_validator.dart';
 
 class CustomDropdownMenuRequiredValidator extends FieldValidator<String?> {
-  CustomDropdownMenuRequiredValidator({required String errorText}) : super(errorText);
+  CustomDropdownMenuRequiredValidator({required String errorText})
+      : super(errorText);
 
   @override
   String? call(Object? value) {
