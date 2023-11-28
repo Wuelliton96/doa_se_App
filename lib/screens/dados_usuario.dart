@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doa_se_app/componentes/decoration_labeText.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+
+import '../componentes/decoration_labeText.dart';
 
 class DadosUsuario extends StatefulWidget {
   const DadosUsuario({Key? key}) : super(key: key);
@@ -96,50 +97,57 @@ class _DadosUsuarioState extends State<DadosUsuario> {
         title: const Text('Meu perfil'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Image.asset("assets/doa-se.png", height: 300, width: 300),
-            const SizedBox(
-              height: 10,
-            ),
-            TextFormField(
-              controller: _nomeController,
-              decoration: getDecorationLabelText('$_nome', 'Nome'),
-            ),
-            const SizedBox(height: 15),
-            TextFormField(
-              controller: _emailController,
-              keyboardType: TextInputType.text,
-              decoration: getDecorationLabelText('$_email', 'E-mail'),
-            ),
-            const SizedBox(height: 15),
-            TextFormField(
-              controller: _nomeUsuarioController,
-              decoration: getDecorationLabelText('$_nomeUsuario', 'Usuario'),
-            ),
-            const SizedBox(height: 40),
-            Visibility(
-              visible: _salvandoDados,
-              child: CircularProgressIndicator(),
-              replacement: ElevatedButton(
-                onPressed: _salvarDadosUsuario,
-                style: ElevatedButton.styleFrom(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Image.asset("assets/doa-se.png", height: 300, width: 300),
+              const SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                controller: _nomeController,
+                decoration:
+                    getDecorationLabelText('Digite o nome completo', '$_nome'),
+                obscureText: true,
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _emailController,
+                keyboardType: TextInputType.text,
+                decoration:
+                    getDecorationLabelText('Digite o novo email', '$_email'),
+                obscureText: true,
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _nomeUsuarioController,
+                decoration: getDecorationLabelText(
+                    'Digite o nome do novo usuario', '$_nomeUsuario'),
+                obscureText: true,
+              ),
+              const SizedBox(height: 40),
+              Visibility(
+                visible: _salvandoDados,
+                child: CircularProgressIndicator(),
+                replacement: ElevatedButton(
+                  onPressed: _salvarDadosUsuario,
+                  style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
-                    minimumSize:
-                        Size(300, 50) // Define a cor vermelha para o botão
+                    minimumSize: Size(300, 50),
+                  ),
+                  child: const Text(
+                    'Atualizar',
+                    style: TextStyle(
+                      fontSize: 20,
                     ),
-                child: const Text(
-                  'Atualizar',
-                  style: TextStyle(
-                    fontSize: 20,
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

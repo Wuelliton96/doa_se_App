@@ -1,14 +1,18 @@
-// ignore: file_names
 import 'package:flutter/material.dart';
 
 import '../models/inserirAnuncio.dart';
 
 // ignore: must_be_immutable
-class ItemAnuncio extends StatelessWidget {
-  ItemAnuncio({super.key, required this.anuncio, this.onTapItem});
+class ItemAnuncioUsuario extends StatelessWidget {
+  ItemAnuncioUsuario(
+      {super.key,
+      required this.anuncio,
+      this.onTapItem,
+      this.onPressedRemover});
 
   Anuncio anuncio;
   VoidCallback? onTapItem;
+  VoidCallback? onPressedRemover;
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +59,6 @@ class ItemAnuncio extends StatelessWidget {
                         height: 30,
                       ),
                       Text(
-                        anuncio.descricao,
-                        style: const TextStyle(
-                          fontSize: 18,
-                        ),
-                        maxLines: 2,
-                      ),
-                      Text(
                         anuncio.categoria,
                         style: const TextStyle(
                           fontSize: 18,
@@ -72,6 +69,21 @@ class ItemAnuncio extends StatelessWidget {
                   ),
                 ),
               ),
+              // botão remover
+              if (onPressedRemover != null)
+                Expanded(
+                  flex: 1,
+                  child: ElevatedButton(
+                    onPressed: onPressedRemover,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    child: const Icon(
+                      Icons.delete,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

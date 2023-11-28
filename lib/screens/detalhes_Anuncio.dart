@@ -92,6 +92,23 @@ class _DetalhesAnuncioState extends State<DetalhesAnuncio> {
                       child: Divider(),
                     ),
                     const Text(
+                      "Categoria",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      _anuncio.categoria,
+                      style: const TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Divider(),
+                    ),
+                    const Text(
                       "Contato",
                       style: TextStyle(
                         fontSize: 18,
@@ -109,7 +126,41 @@ class _DetalhesAnuncioState extends State<DetalhesAnuncio> {
                       child: Divider(),
                     ),
                     const Text(
-                      "Endereço",
+                      "Bairro",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      _anuncio.bairro,
+                      style: const TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Divider(),
+                    ),
+                    const Text(
+                      "Cidade",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      _anuncio.cidade,
+                      style: const TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Divider(),
+                    ),
+                    const Text(
+                      "Estado",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -121,23 +172,7 @@ class _DetalhesAnuncioState extends State<DetalhesAnuncio> {
                         fontSize: 18,
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Divider(),
-                    ),
-                    const Text(
-                      "Categoria",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      _anuncio.categoria,
-                      style: const TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
+
                     const SizedBox(
                         height: 70), // Espaço para acomodar o botão "Ligar"
                   ],

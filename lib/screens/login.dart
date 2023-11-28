@@ -1,12 +1,10 @@
-import 'package:doa_se_app/componentes/constants.dart';
-import 'package:doa_se_app/screens/cadastro/cadastro_usuario.dart';
-import 'package:doa_se_app/componentes/decoration_labeText.dart';
-import 'package:doa_se_app/screens/redefinir_senha.dart';
-import 'package:doa_se_app/services/autenticacao_servico.dart';
 import 'package:flutter/material.dart';
-import 'package:doa_se_app/componentes/mensagem.dart';
 
+import '../componentes/mensagem.dart';
+import '../services/autenticacao_servico.dart';
 import 'authenticationWrapper.dart';
+import 'cadastro/cadastro_usuario.dart';
+import 'redefinir_senha.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -206,7 +204,7 @@ class _LoginState extends State<Login> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => const HomePag(),
+              builder: (context) => const AuthenticationWrapper(),
             ),
           );
         }

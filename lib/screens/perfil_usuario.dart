@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doa_se_app/screens/anuncios_usuario.dart';
-import 'package:doa_se_app/screens/dados_usuario.dart';
-import 'package:doa_se_app/screens/login_usuario.dart';
 
-class Usuario extends StatefulWidget {
+import 'authenticationWrapper.dart';
+import 'dados_usuario.dart';
+import 'detalhes_anuncios_usuario.dart';
+
+class PerfilUsuario extends StatefulWidget {
   @override
-  _UsuarioState createState() => _UsuarioState();
+  _PerfilUsuarioState createState() => _PerfilUsuarioState();
 }
 
-class _UsuarioState extends State<Usuario> {
+class _PerfilUsuarioState extends State<PerfilUsuario> {
   String userName = '';
 
   @override
@@ -105,10 +106,10 @@ class CustomCard extends StatelessWidget {
           // Faz o logout usando o Firebase Auth
           FirebaseAuth.instance.signOut().then((_) {
             // Navega de volta para a página de login e remove a pilha de navegação existente
-            Navigator.pushAndRemoveUntil(
+            Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const Login()),
-              (Route<dynamic> route) => false,
+              MaterialPageRoute(
+                  builder: (context) => const AuthenticationWrapper()),
             );
           }).catchError((error) {
             print('Erro ao fazer logout: $error');

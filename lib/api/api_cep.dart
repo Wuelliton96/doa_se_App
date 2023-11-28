@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:doa_se_app/models/cep_model.dart';
 import 'package:http/http.dart' as http;
+
+import '../models/cep_model.dart';
 
 class ViaCepApi {
   static Future<AddressInfo?> getAddressInfo(String cep) async {

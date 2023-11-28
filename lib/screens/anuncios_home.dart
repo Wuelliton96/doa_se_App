@@ -1,11 +1,11 @@
 // Importações necessárias
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doa_se_app/screens/detalhes_Anuncio.dart';
 import 'package:flutter/material.dart';
 
 import '../models/inserirAnuncio.dart';
 import '../widgets/cust_itemAnuncio.dart';
+import 'detalhes_Anuncio.dart';
 
 // Classe responsável por renderizar a tela de anúncios
 class Anuncios extends StatefulWidget {

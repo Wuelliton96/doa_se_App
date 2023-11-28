@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:doa_se_app/screens/login_usuario.dart';
+
+import 'login.dart';
 
 class RedefinirSenha extends StatefulWidget {
   const RedefinirSenha({Key? key}) : super(key: key);

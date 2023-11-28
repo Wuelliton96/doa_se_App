@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../models/inserirAnuncio.dart';
-import '../widgets/cust_itemAnuncio.dart';
+import '../widgets/cust_itemAnuncioUsuario.dart';
 
 // Classe responsável por renderizar a tela de anúncios
 class AnunciosUsuario extends StatefulWidget {
@@ -120,7 +120,7 @@ class _AnunciosUsuarioState extends State<AnunciosUsuario> {
                                   anuncios[indice];
                               Anuncio anuncio = Anuncio.fromDocumentSnapshot(
                                   documentSnapshot);
-                              return ItemAnuncio(
+                              return ItemAnuncioUsuario(
                                 anuncio: anuncio,
                                 //botao para remoção do anúncio do usuário
                                 onPressedRemover: () {

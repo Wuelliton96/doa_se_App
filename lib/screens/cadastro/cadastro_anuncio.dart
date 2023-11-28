@@ -1,9 +1,6 @@
 import 'dart:io';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doa_se_app/componentes/decoration_labeText.dart';
-import 'package:doa_se_app/models/inserirAnuncio.dart';
-import 'package:doa_se_app/utils/config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -12,8 +9,11 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../api/api_cep.dart';
+import '../../componentes/decoration_labeText.dart';
 import '../../models/cep_model.dart';
+import '../../models/inserirAnuncio.dart';
 import '../../services/anuncio_service.dart';
+import '../../utils/config_categoria.dart';
 import '../../widgets/cust_button.dart';
 import '../../widgets/cust_valid.dart';
 import '../authenticationWrapper.dart';

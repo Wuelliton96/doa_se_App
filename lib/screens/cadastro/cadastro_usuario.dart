@@ -10,7 +10,7 @@ import '../../componentes/constants.dart';
 import '../../componentes/decoration_labeText.dart';
 import '../../componentes/mensagem.dart';
 import '../../services/usuario_service.dart';
-import '../login_usuario.dart';
+import '../login.dart';
 
 class Cadastro extends StatefulWidget {
   const Cadastro({super.key});
