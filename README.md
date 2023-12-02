@@ -16,11 +16,9 @@ O aplicativo Doa_se contará com as seguintes funcionalidades principais:
 1. **Registro de Usuário**: Os usuários podem criar uma conta no aplicativo, fornecendo informações pessoais básicas.
 2. **Login**: Os usuários registrados podem fazer login em suas contas.
 3. **Listagem de Doações**: Visualização de doações disponíveis, incluindo detalhes como tipo de doação, localização e data.
-4. **Solicitação de Doação**: Os usuários que necessitam de ajuda podem solicitar uma doação específica.
-5. **Doações**: Os usuários podem oferecer doações e especificar os itens que desejam doar.
-6. **Mensagens**: Comunicação direta entre usuários por meio de mensagens.
-7. **Gerenciamento de Perfil**: Atualização de informações de perfil e preferências pelos usuários.
-8. **Geolocalização**: Utilização da geolocalização para encontrar doações próximas.
+4. **Doações**: Os usuários podem oferecer doações e especificar os itens que desejam doar.
+5. **Gerenciamento de Perfil**: Atualização de informações de perfil e preferências pelos usuários.
+6. **Geolocalização**: Utilização da geolocalização para encontrar doações próximas.
 
 ## Requisitos
 

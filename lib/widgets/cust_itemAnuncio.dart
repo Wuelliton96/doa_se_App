@@ -61,11 +61,13 @@ class ItemAnuncio extends StatelessWidget {
                         ),
                         maxLines: 2,
                       ),
+                      const SizedBox(
+                        height: 15,
+                      ),
                       Text(
                         anuncio.categoria,
                         style: const TextStyle(
-                          fontSize: 18,
-                        ),
+                            fontSize: 15, fontWeight: FontWeight.w300),
                         maxLines: 2,
                       ),
                     ],

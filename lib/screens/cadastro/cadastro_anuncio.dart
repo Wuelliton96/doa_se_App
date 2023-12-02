@@ -78,7 +78,8 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
             child: const Text('OK'),
             onPressed: () {
               Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => AuthenticationWrapper()),
+                  MaterialPageRoute(
+                      builder: (context) => AuthenticationWrapper()),
                   (Route<dynamic> router) => false);
             },
           )
@@ -109,10 +110,8 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
 
     for (var imagem in _listaImagens) {
       String nomeImagem = DateTime.now().millisecondsSinceEpoch.toString();
-      Reference arquivo = pastaRaiz
-          .child("meus_anuncios")
-          .child(_anuncio.id)
-          .child(nomeImagem);
+      Reference arquivo =
+          pastaRaiz.child("meus_anuncios").child(_anuncio.id).child(nomeImagem);
 
       UploadTask uploadTask = arquivo.putFile(imagem);
 
@@ -405,9 +404,9 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                                 });
                               },
                               validator: requiredValidator,
-                                onSaved: (cep) {
-                                  cep != null ? _anuncio.cep = cep : null;
-                                },
+                              onSaved: (cep) {
+                                cep != null ? _anuncio.cep = cep : null;
+                              },
                             ),
                           ),
                           const SizedBox(
@@ -499,8 +498,7 @@ class _InserirAnuncioState extends State<InserirAnuncio> {
                           }
                         },
                       ),
-                    ]
-                    ),
+                    ]),
               ),
             ),
           ),
